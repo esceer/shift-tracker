@@ -1,5 +1,5 @@
 import { buildPeriodReport, describeDays } from '@/domain/balance';
-import { datesBetween, periodRange } from '@/domain/dates';
+import { datesBetween, monthsInPeriod, periodRange } from '@/domain/dates';
 import { mergeEntries } from '@/domain/holidays';
 import type { DayInfo, ISODate, Period, PeriodReport, PublicHoliday } from '@/domain/types';
 
@@ -53,5 +53,18 @@ export function readDayForEditing(db: Database, date: ISODate) {
     scheduledMinutes: day.scheduledMinutes,
     entry: getEntry(db, date),
     holidayName: listHolidays(db, { start: date, end: date })[0]?.name,
+  };
+}
+
+/** Everything a printable report needs: totals, per-month totals for quarters, and the changes. */
+export function readReportExport(db: Database, period: Period) {
+  const { start, end } = periodRange(period);
+  return {
+    report: readPeriodReport(db, period),
+    months:
+      period.type === 'quarter' ? monthsInPeriod(period).map((m) => readPeriodReport(db, m)) : [],
+    changes: readDays(db, start, end).filter(
+      (day) => day.entry && !(day.entry.synced && day.scheduledMinutes === 0),
+    ),
   };
 }

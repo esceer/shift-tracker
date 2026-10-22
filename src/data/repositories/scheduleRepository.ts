@@ -23,7 +23,7 @@ function toDomain(row: Row): ScheduleVersion {
   };
 }
 
-function toRow(version: ScheduleVersion): Row {
+export function toScheduleRow(version: ScheduleVersion): Row {
   const m = version.minutesByWeekday;
   return {
     id: version.id,
@@ -50,7 +50,7 @@ export function listScheduleVersions(db: Database): ScheduleVersion[] {
 
 /** Inserts or updates (by id). Two versions cannot share an `effectiveFrom`. */
 export function saveScheduleVersion(db: Database, version: ScheduleVersion): void {
-  const row = toRow(version);
+  const row = toScheduleRow(version);
   db.insert(scheduleVersions)
     .values(row)
     .onConflictDoUpdate({ target: scheduleVersions.id, set: row })

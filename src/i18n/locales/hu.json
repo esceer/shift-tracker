@@ -130,5 +130,32 @@
     "syncNow": "Frissítés most",
     "syncing": "Frissítés…",
     "syncFailed": "Nem sikerült frissíteni. Ellenőrizd az internetkapcsolatot."
+  },
+  "export": {
+    "exportPdf": "PDF exportálás",
+    "exporting": "PDF készül…",
+    "failed": "Nem sikerült létrehozni a PDF-et.",
+    "reportTitle": "Munkaidő-kimutatás",
+    "generated": "Készült: {{date}}",
+    "scheduled": "Beosztás szerint",
+    "worked": "Ledolgozva",
+    "balance": "Egyenleg",
+    "date": "Dátum",
+    "type": "Típus",
+    "note": "Megjegyzés",
+    "change": "Változás"
+  },
+  "backup": {
+    "title": "Biztonsági mentés",
+    "description": "Mentsd el az összes adatodat egy fájlba, pl. telefoncsere előtt.",
+    "export": "Mentés exportálása",
+    "restore": "Mentés visszaállítása",
+    "confirmTitle": "Felülírod az összes adatot?",
+    "confirmMessage": "A jelenlegi munkarendet és változásokat a mentés tartalma váltja fel.",
+    "confirm": "Visszaállítás",
+    "cancel": "Mégse",
+    "restored": "Mentés visszaállítva.",
+    "invalid": "Ez a fájl nem Shift Tracker mentés.",
+    "failed": "Hiba történt. Próbáld újra."
   }
 }

@@ -130,5 +130,32 @@
     "syncNow": "Sync now",
     "syncing": "Syncing…",
     "syncFailed": "Couldn't sync. Check your internet connection."
+  },
+  "export": {
+    "exportPdf": "Export PDF",
+    "exporting": "Creating PDF…",
+    "failed": "Couldn't create the PDF.",
+    "reportTitle": "Work time report",
+    "generated": "Generated on {{date}}",
+    "scheduled": "Scheduled",
+    "worked": "Worked",
+    "balance": "Balance",
+    "date": "Date",
+    "type": "Type",
+    "note": "Note",
+    "change": "Change"
+  },
+  "backup": {
+    "title": "Backup",
+    "description": "Save all your data to a file, e.g. before changing phones.",
+    "export": "Export backup",
+    "restore": "Restore backup",
+    "confirmTitle": "Replace all data?",
+    "confirmMessage": "Your current schedule and changes will be replaced by the ones in the backup.",
+    "confirm": "Restore",
+    "cancel": "Cancel",
+    "restored": "Backup restored.",
+    "invalid": "This file is not a Shift Tracker backup.",
+    "failed": "Something went wrong. Please try again."
   }
 }

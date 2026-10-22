@@ -1,6 +1,12 @@
 import { i18n } from '@/i18n';
 
-import { capitalize, formatDate, formatDuration, formatDurationCompact } from './format';
+import {
+  capitalize,
+  formatDate,
+  formatDuration,
+  formatDurationCompact,
+  formatPeriod,
+} from './format';
 
 describe('formatDuration', () => {
   const t = i18n.getFixedT('en');
@@ -52,5 +58,19 @@ describe('formatDate styles', () => {
     expect(formatDate('2026-10-28', 'en', 'monthYear')).toBe('October 2026');
     expect(formatDate('2026-10-28', 'hu', 'monthYear')).toBe('2026. október');
     expect(formatDate('2026-07-01', 'en', 'monthShort')).toBe('Jul');
+  });
+});
+
+describe('formatPeriod', () => {
+  it('names months and quarters', () => {
+    expect(formatPeriod({ type: 'month', year: 2026, month: 10 }, i18n.getFixedT('en'), 'en')).toBe(
+      'October 2026',
+    );
+    expect(
+      formatPeriod({ type: 'quarter', year: 2026, quarter: 3 }, i18n.getFixedT('en'), 'en'),
+    ).toBe('Q3 · Jul – Sep 2026');
+    expect(
+      formatPeriod({ type: 'quarter', year: 2026, quarter: 3 }, i18n.getFixedT('hu'), 'hu'),
+    ).toBe('2026. 3. negyedév · júl. – szept.');
   });
 });

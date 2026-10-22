@@ -13,7 +13,8 @@ import {
 } from '@/domain/dates';
 import type { AbsenceKind, Period } from '@/domain/types';
 import type { Language } from '@/i18n/language';
-import { capitalize, formatDate, formatDuration } from '@/lib/format';
+import { capitalize, formatDate, formatDuration, formatPeriod } from '@/lib/format';
+import { Button } from '@/ui/components/Button';
 import { Icon } from '@/ui/components/Icon';
 import { IconButton } from '@/ui/components/IconButton';
 import { Screen } from '@/ui/components/Screen';
@@ -22,6 +23,8 @@ import { Text } from '@/ui/components/Text';
 import { Tile } from '@/ui/components/Tile';
 import { dayTint, kindIcon, kindTint } from '@/ui/theme/entryStyle';
 import { colors, radius, spacing, tints } from '@/ui/theme/tokens';
+
+import { exportReportPdf } from './pdf/exportReportPdf';
 
 type MonthPeriod = Extract<Period, { type: 'month' }>;
 const ABSENCES: AbsenceKind[] = ['vacation', 'sick', 'holiday'];
@@ -50,16 +53,17 @@ export function ReportsScreen() {
   const duration = (minutes: number, signed = false) => formatDuration(minutes, t, { signed });
 
   const months = monthsInPeriod(period);
-  const monthStart = (m: MonthPeriod) => periodRange(m).start;
-  const title =
-    period.type === 'month'
-      ? capitalize(formatDate(monthStart(period), language, 'monthYear'))
-      : t('reports.quarterTitle', {
-          quarter: period.quarter,
-          year: period.year,
-          from: formatDate(monthStart(months[0]!), language, 'monthShort'),
-          to: formatDate(monthStart(months[2]!), language, 'monthShort'),
-        });
+  const [exportState, setExportState] = useState<'idle' | 'busy' | 'failed'>('idle');
+
+  const exportPdf = async () => {
+    setExportState('busy');
+    try {
+      await exportReportPdf(period, t, language);
+      setExportState('idle');
+    } catch {
+      setExportState('failed');
+    }
+  };
 
   return (
     <Screen withTabBar>
@@ -84,7 +88,7 @@ export function ReportsScreen() {
             background="rgba(255,255,255,0.6)"
           />
           <Text variant="bodyStrong" style={styles.periodTitle} accessibilityRole="header">
-            {title}
+            {formatPeriod(period, t, language)}
           </Text>
           <IconButton
             icon="chevronRight"
@@ -128,6 +132,18 @@ export function ReportsScreen() {
           ))}
         </View>
       </Tile>
+
+      <Button
+        label={exportState === 'busy' ? t('export.exporting') : t('export.exportPdf')}
+        icon="download"
+        onPress={exportPdf}
+        disabled={exportState === 'busy'}
+      />
+      {exportState === 'failed' && (
+        <Text variant="label" style={styles.center} accessibilityLiveRegion="polite">
+          {t('export.failed')}
+        </Text>
+      )}
     </Screen>
   );
 }

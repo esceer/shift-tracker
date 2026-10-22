@@ -97,16 +97,14 @@ src/
       nagerClient.ts              # GET date.nager.at/api/v3/PublicHolidays/{year}/HU, zod-validated
       syncHolidays.ts             # fetch current + next year → replace cached rows; store lastSyncedAt
     backup/
-      backupSchema.ts             # zod schema + version field
-      exportBackup.ts / importBackup.ts
+      backup.ts                   # buildBackup() / restoreBackup(): versioned JSON, zod-validated, all-or-nothing
   features/
     home/          (HomeScreen, BalanceHero, EntryList, hooks/useMonthReport)
     calendar/      (CalendarScreen, MonthGrid, DayCell)
     entries/       (EntryEditor, KindSelector, DurationStepper, hooks/useDayEntry)
     schedule/      (ScheduleListScreen, ScheduleEditor, WeekdayRow)
-    reports/       (ReportsScreen, PeriodSwitcher, ReportSummary, hooks/usePeriodReport)
-    export/        (pdf/reportTemplate.ts → HTML, pdf/exportPdf.ts, share)
-    settings/      (SettingsScreen, language, holiday sync toggle + "Sync now", backup actions)
+    reports/       (ReportsScreen; pdf/reportHtml.ts → HTML, pdf/exportReportPdf.ts → print + share)
+    settings/      (SettingsScreen, HolidaySyncTile, BackupTile)
     onboarding/
   ui/
     theme/        (tokens.ts: colors, tints, radius, spacing, typography; fonts.ts; light only)

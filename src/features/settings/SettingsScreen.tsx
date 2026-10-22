@@ -18,6 +18,7 @@ import { Text } from '@/ui/components/Text';
 import { Tile } from '@/ui/components/Tile';
 import { colors, spacing } from '@/ui/theme/tokens';
 
+import { BackupTile } from './BackupTile';
 import { HolidaySyncTile } from './HolidaySyncTile';
 
 const WEEKDAYS: Weekday[] = [1, 2, 3, 4, 5, 6, 7];
@@ -104,6 +105,8 @@ export function SettingsScreen() {
           background={colors.surfaceMuted}
         />
       </Tile>
+
+      <BackupTile />
     </Screen>
   );
 }

@@ -2,9 +2,9 @@ import { format } from 'date-fns';
 import { enGB, hu } from 'date-fns/locale';
 import type { TFunction } from 'i18next';
 
-import { fromISODate } from '@/domain/dates';
+import { fromISODate, monthsInPeriod, periodRange } from '@/domain/dates';
 import { splitDuration } from '@/domain/duration';
-import type { ISODate, Minutes } from '@/domain/types';
+import type { ISODate, Minutes, Period } from '@/domain/types';
 import type { Language } from '@/i18n/language';
 
 const dateLocales = { en: enGB, hu };
@@ -61,4 +61,17 @@ export function formatDate(date: ISODate, language: Language, style: DateStyle =
 /** Uppercases the first letter (Hungarian month and day names are lowercase). */
 export function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/** "October 2026" / "2026. október", or "Q3 · Jul – Sep 2026" / "2026. 3. negyedév · júl. – szept.". */
+export function formatPeriod(period: Period, t: TFunction, language: Language): string {
+  const start = (p: Period) => periodRange(p).start;
+  if (period.type === 'month') return capitalize(formatDate(start(period), language, 'monthYear'));
+  const months = monthsInPeriod(period);
+  return t('reports.quarterTitle', {
+    quarter: period.quarter,
+    year: period.year,
+    from: formatDate(start(months[0]!), language, 'monthShort'),
+    to: formatDate(start(months[2]!), language, 'monthShort'),
+  });
 }

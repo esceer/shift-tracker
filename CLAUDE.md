@@ -45,3 +45,4 @@ Expo (managed, dev builds) · TypeScript strict · Expo Router · expo-sqlite + 
 - Schema change: edit `src/data/schema.ts`, then `npm run db:generate` (never edit generated migrations).
 - Repositories are synchronous and take a `Database`; test them with `createTestDb()` (sql.js, `@jest-environment node`).
 - Install packages with `npx expo install` (SDK-matched versions).
+- Files (expo-file-system SDK 58): `write`/`move`/`text` are async, await them. Expo Go blocks access to other modules' cache files: read picked files via `copyToCacheDirectory: false`, take expo-print output as `base64`.
