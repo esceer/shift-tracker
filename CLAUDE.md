@@ -42,3 +42,6 @@ Expo (managed, dev builds) · TypeScript strict · Expo Router · expo-sqlite + 
 - Weekday index: ISO, 1 = Monday … 7 = Sunday.
 - Named exports; one component per file; colocated `*.test.ts`.
 - Commands: `npm run lint`, `npm run typecheck`, `npm test`. All must pass before committing.
+- Schema change: edit `src/data/schema.ts`, then `npm run db:generate` (never edit generated migrations).
+- Repositories are synchronous and take a `Database`; test them with `createTestDb()` (sql.js, `@jest-environment node`).
+- Install packages with `npx expo install` (SDK-matched versions).

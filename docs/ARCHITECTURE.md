@@ -81,7 +81,9 @@ src/
     duration.ts                   # minutes ↔ {h, m}, rounding to 15
     *.test.ts
   data/
-    db.ts                         # open expo-sqlite, drizzle instance
+    database.ts                   # `Database` type: any sync Drizzle SQLite db (expo-sqlite in app, sql.js in tests)
+    db.ts                         # open expo-sqlite, drizzle instance, useDatabaseMigrations()
+    testDb.ts                     # in-memory sql.js db with migrations applied (tests only)
     schema.ts                     # drizzle tables: schedule_versions, day_entries, public_holidays, settings
     migrations/                   # drizzle-kit generated
     repositories/
@@ -121,7 +123,7 @@ src/
 | --------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Framework       | Expo (managed) + dev builds                                                         | Easiest Android build path, same codebase for iOS later                                                                                                                |
 | Navigation      | Expo Router (file-based)                                                            | Current standard, typed routes                                                                                                                                         |
-| Persistence     | expo-sqlite + Drizzle ORM                                                           | Relational data, typed queries, generated migrations, `useLiveQuery` for reactive UI                                                                                   |
+| Persistence     | expo-sqlite + Drizzle ORM 0.45 (sync API)                                           | Relational data, typed queries, generated migrations, `useLiveQuery` for reactive UI                                                                                   |
 | State           | DB is the source of truth; live queries + small hooks                               | No global store needed; settings via a React context                                                                                                                   |
 | Dates           | date-fns (+ `hu` / `enUS` locales)                                                  | Tree-shakeable, string dates without time zone issues                                                                                                                  |
 | i18n            | i18next + react-i18next + expo-localization                                         | De facto standard                                                                                                                                                      |
