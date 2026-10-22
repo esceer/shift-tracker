@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Shift Tracker",
+    "slug": "shift-tracker",
+    "scheme": "shifttracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.shifttracker.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E4DDFF",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": ["expo-router", "expo-font", "expo-splash-screen", "expo-asset"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
