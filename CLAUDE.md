@@ -33,7 +33,7 @@ Expo (managed, dev builds) · TypeScript strict · Expo Router · expo-sqlite + 
 - `src/data/`: DB schema, migrations, repositories. The only layer that touches SQLite.
 - `src/features/<name>/`: screens, components and hooks for one feature.
 - `src/ui/`: design system (tokens, theme, primitives). No business logic.
-- `src/i18n/`: setup + `locales/{en,hu}.json`. No hard-coded UI strings.
+- `src/i18n/`: setup + `locales/{en,hu}.json`. No hard-coded UI strings; add every key to both files (a test checks they match). Keys are type-checked against `en.json`.
 - Dependency direction: `app → features → (data, ui) → domain`. Never the reverse.
 
 ## Conventions

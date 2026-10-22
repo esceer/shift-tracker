@@ -107,8 +107,8 @@ src/
     settings/      (SettingsScreen, language, holiday sync toggle + "Sync now", backup actions)
     onboarding/
   ui/
-    theme/        (tokens: color, spacing, radius, typography; light only)
-    components/   (Screen, LargeTitleHeader, Card, Button, SegmentedControl, ListItem, Sheet, Text, …)
+    theme/        (tokens.ts: colors, tints, radius, spacing, typography; fonts.ts; light only)
+    components/   (Screen, Text, Icon, Tile, Button, IconButton, SegmentedControl, Stepper, ListRow, FloatingTabBar)
   i18n/
     index.ts      (i18next + expo-localization)
     locales/en.json, hu.json

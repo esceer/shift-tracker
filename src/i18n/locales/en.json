@@ -1,0 +1,12 @@
+{
+  "tabs": {
+    "home": "Home",
+    "calendar": "Calendar",
+    "reports": "Reports",
+    "settings": "Settings",
+    "addChange": "Add change"
+  },
+  "common": {
+    "comingSoon": "Coming soon"
+  }
+}

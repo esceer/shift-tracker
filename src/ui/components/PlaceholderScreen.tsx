@@ -1,25 +1,18 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
-import { fonts } from '@/ui/theme/fonts';
+import { Screen } from '@/ui/components/Screen';
+import { Text } from '@/ui/components/Text';
+import { colors } from '@/ui/theme/tokens';
 
 type Props = { title: string };
 
 /** Temporary screen body until the real feature screen is built. */
 export function PlaceholderScreen({ title }: Props) {
+  const { t } = useTranslation();
   return (
-    <SafeAreaView style={styles.screen}>
-      <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>Coming soon</Text>
-      </View>
-    </SafeAreaView>
+    <Screen withTabBar>
+      <Text variant="display">{title}</Text>
+      <Text color={colors.inkMuted}>{t('common.comingSoon')}</Text>
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#F7F6FB' },
-  content: { flex: 1, paddingHorizontal: 22, paddingTop: 24, gap: 4 },
-  title: { fontFamily: fonts.displayExtraBold, fontSize: 40, color: '#1B1A2E' },
-  subtitle: { fontFamily: fonts.bodyMedium, fontSize: 15, color: '#4A4860' },
-});

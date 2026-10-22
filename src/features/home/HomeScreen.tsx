@@ -1,5 +1,8 @@
+import { useTranslation } from 'react-i18next';
+
 import { PlaceholderScreen } from '@/ui/components/PlaceholderScreen';
 
 export function HomeScreen() {
-  return <PlaceholderScreen title="Home" />;
+  const { t } = useTranslation();
+  return <PlaceholderScreen title={t('tabs.home')} />;
 }

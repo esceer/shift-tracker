@@ -1,0 +1,12 @@
+{
+  "tabs": {
+    "home": "Kezdőlap",
+    "calendar": "Naptár",
+    "reports": "Kimutatások",
+    "settings": "Beállítások",
+    "addChange": "Változás hozzáadása"
+  },
+  "common": {
+    "comingSoon": "Hamarosan"
+  }
+}

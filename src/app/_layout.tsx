@@ -2,28 +2,38 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { useDatabaseMigrations } from '@/data/db';
+import { db, useDatabaseMigrations } from '@/data/db';
+import { getSettings } from '@/data/repositories/settingsRepository';
+import { applyLanguage } from '@/i18n';
 import { fontAssets } from '@/ui/theme/fonts';
+import { colors } from '@/ui/theme/tokens';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts(fontAssets);
   const migrations = useDatabaseMigrations();
-
-  const fontsReady = fontsLoaded || !!fontError;
-  const dbReady = migrations.success || !!migrations.error;
+  const [languageReady, setLanguageReady] = useState(false);
 
   useEffect(() => {
-    if (fontsReady && dbReady) {
+    if (migrations.success) {
+      applyLanguage(getSettings(db).language).finally(() => setLanguageReady(true));
+    }
+  }, [migrations.success]);
+
+  const fontsReady = fontsLoaded || !!fontError;
+  const ready = fontsReady && (languageReady || !!migrations.error);
+
+  useEffect(() => {
+    if (ready) {
       SplashScreen.hideAsync();
     }
-  }, [fontsReady, dbReady]);
+  }, [ready]);
 
-  if (!fontsReady || !dbReady) {
+  if (!ready) {
     return null;
   }
 
@@ -39,7 +49,12 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack
+        screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}
+      >
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="entry/[date]" options={{ presentation: 'modal' }} />
+      </Stack>
     </>
   );
 }
