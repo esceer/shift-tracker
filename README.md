@@ -19,21 +19,21 @@ Your data lives in the app's local database. Uninstalling the app deletes it; us
 
 The release build bundles the JavaScript and runs on its own. It is installed directly from the APK (sideloaded), not through Google Play.
 
-**Signing key (one-time).** Android only accepts an update signed with the same key as the installed app, so keep the key safe and backed up. Losing it means uninstalling, which deletes the data. Create a keystore outside the repo:
+**Signing key (one-time).** Android only accepts an update signed with the same key as the installed app, so keep the key safe and backed up. Losing it means uninstalling, which deletes the data. Create a keystore outside the repo with a random password, and record its details in `~/.gradle/gradle.properties`:
 
 ```sh
+mkdir -p ~/keystores && \
+export HETES_PW="$(openssl rand -base64 48 | tr -d '/+=' | cut -c1-32)" && \
 keytool -genkeypair -storetype PKCS12 -keystore ~/keystores/hetes-release.jks \
-  -alias hetes -keyalg RSA -keysize 4096 -validity 10000
+  -alias hetes -keyalg RSA -keysize 4096 -validity 10000 \
+  -storepass:env HETES_PW -keypass:env HETES_PW \
+  -dname "CN=Hetes, O=esceer, C=HU" && \
+printf '\nHETES_RELEASE_STORE_FILE=%s\nHETES_RELEASE_STORE_PASSWORD=%s\nHETES_RELEASE_KEY_ALIAS=hetes\nHETES_RELEASE_KEY_PASSWORD=%s\n' \
+  "$HOME/keystores/hetes-release.jks" "$HETES_PW" "$HETES_PW" >> ~/.gradle/gradle.properties && \
+unset HETES_PW
 ```
 
-Then add its details to `~/.gradle/gradle.properties`:
-
-```properties
-HETES_RELEASE_STORE_FILE=/Users/<you>/keystores/hetes-release.jks
-HETES_RELEASE_STORE_PASSWORD=...
-HETES_RELEASE_KEY_ALIAS=hetes
-HETES_RELEASE_KEY_PASSWORD=...
-```
+Back up `hetes-release.jks` together with the password from `~/.gradle/gradle.properties` (for example in a password manager).
 
 The config plugin `plugins/withReleaseSigning.js` wires these into the generated `android/` project on every prebuild.
 
