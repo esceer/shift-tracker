@@ -44,6 +44,10 @@ const datePatterns = {
   dayShort: { en: 'EEE d', hu: 'MMM d.' },
   /** "October" / "október" */
   month: { en: 'LLLL', hu: 'LLLL' },
+  /** "Oct" / "okt." */
+  monthShort: { en: 'LLL', hu: 'LLL' },
+  /** "October 2026" / "2026. október" */
+  monthYear: { en: 'LLLL yyyy', hu: 'yyyy. LLLL' },
 } as const;
 
 export type DateStyle = keyof typeof datePatterns;

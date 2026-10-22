@@ -49,5 +49,8 @@ describe('formatDate styles', () => {
     expect(formatDate('2026-10-28', 'hu', 'dayShort')).toBe('okt. 28.');
     expect(capitalize(formatDate('2026-10-28', 'hu', 'month'))).toBe('Október');
     expect(formatDate('2026-10-28', 'en', 'month')).toBe('October');
+    expect(formatDate('2026-10-28', 'en', 'monthYear')).toBe('October 2026');
+    expect(formatDate('2026-10-28', 'hu', 'monthYear')).toBe('2026. október');
+    expect(formatDate('2026-07-01', 'en', 'monthShort')).toBe('Jul');
   });
 });

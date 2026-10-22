@@ -5,6 +5,7 @@ import {
   monthsInPeriod,
   periodRange,
   quarterOfMonth,
+  shiftPeriod,
   weekStart,
   weekdayOf,
 } from './dates';
@@ -79,5 +80,33 @@ describe('addDays / weekStart / datesBetween', () => {
       '2026-11-01',
       '2026-11-02',
     ]);
+  });
+});
+
+describe('shiftPeriod', () => {
+  it('moves months across year boundaries', () => {
+    expect(shiftPeriod({ type: 'month', year: 2026, month: 12 }, 1)).toEqual({
+      type: 'month',
+      year: 2027,
+      month: 1,
+    });
+    expect(shiftPeriod({ type: 'month', year: 2026, month: 1 }, -1)).toEqual({
+      type: 'month',
+      year: 2025,
+      month: 12,
+    });
+  });
+
+  it('moves quarters across year boundaries', () => {
+    expect(shiftPeriod({ type: 'quarter', year: 2026, quarter: 4 }, 1)).toEqual({
+      type: 'quarter',
+      year: 2027,
+      quarter: 1,
+    });
+    expect(shiftPeriod({ type: 'quarter', year: 2026, quarter: 1 }, -1)).toEqual({
+      type: 'quarter',
+      year: 2025,
+      quarter: 4,
+    });
   });
 });

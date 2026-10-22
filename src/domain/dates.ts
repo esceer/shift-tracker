@@ -67,3 +67,17 @@ export function addDays(date: ISODate, days: number): ISODate {
 export function weekStart(date: ISODate): ISODate {
   return addDays(date, 1 - weekdayOf(date));
 }
+
+/** The period `delta` months or quarters before/after `period`. */
+export function shiftPeriod(period: Period, delta: number): Period {
+  if (period.type === 'month') {
+    const index = period.year * 12 + (period.month - 1) + delta;
+    return { type: 'month', year: Math.floor(index / 12), month: (index % 12) + 1 };
+  }
+  const index = period.year * 4 + (period.quarter - 1) + delta;
+  return {
+    type: 'quarter',
+    year: Math.floor(index / 4),
+    quarter: ((index % 4) + 1) as 1 | 2 | 3 | 4,
+  };
+}

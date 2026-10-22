@@ -7,7 +7,6 @@
     "addChange": "Add change"
   },
   "common": {
-    "comingSoon": "Coming soon",
     "back": "Back"
   },
   "duration": {
@@ -112,5 +111,15 @@
     "dayOff": "Day off",
     "add": "Add",
     "edit": "Edit"
+  },
+  "reports": {
+    "month": "Month",
+    "quarter": "Quarter",
+    "previous": "Previous period",
+    "next": "Next period",
+    "quarterTitle": "Q{{quarter}} · {{from}} – {{to}} {{year}}",
+    "daysOff": "Days off",
+    "changes": "Changes",
+    "noChanges": "No changes in this month"
   }
 }

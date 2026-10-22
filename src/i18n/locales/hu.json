@@ -7,7 +7,6 @@
     "addChange": "Változás hozzáadása"
   },
   "common": {
-    "comingSoon": "Hamarosan",
     "back": "Vissza"
   },
   "duration": {
@@ -112,5 +111,15 @@
     "dayOff": "Szabadnap",
     "add": "Hozzáadás",
     "edit": "Szerkesztés"
+  },
+  "reports": {
+    "month": "Hónap",
+    "quarter": "Negyedév",
+    "previous": "Előző időszak",
+    "next": "Következő időszak",
+    "quarterTitle": "{{year}}. {{quarter}}. negyedév · {{from}} – {{to}}",
+    "daysOff": "Távollétek",
+    "changes": "Változások",
+    "noChanges": "Ebben a hónapban nincs változás"
   }
 }

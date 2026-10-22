@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { useDays } from '@/data/live';
-import { periodRange, toISODate, weekdayOf } from '@/domain/dates';
-import type { DayInfo, ISODate } from '@/domain/types';
+import { periodRange, shiftPeriod, toISODate, weekdayOf } from '@/domain/dates';
+import type { DayInfo, ISODate, Period } from '@/domain/types';
 import type { Language } from '@/i18n/language';
 import { capitalize, formatDate, formatDuration } from '@/lib/format';
 import { Button } from '@/ui/components/Button';
@@ -17,8 +17,6 @@ import { Tile } from '@/ui/components/Tile';
 import { dayTint } from '@/ui/theme/entryStyle';
 import { colors, radius, spacing, tints, type Tint } from '@/ui/theme/tokens';
 
-type Month = { year: number; month: number };
-
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 7] as const;
 const LEGEND: { tint: Tint; key: string }[] = [
   { tint: 'sky', key: 'calendar.extra' },
@@ -27,11 +25,6 @@ const LEGEND: { tint: Tint; key: string }[] = [
   { tint: 'butter', key: 'entryKind.vacation' },
   { tint: 'pink', key: 'entryKind.sick' },
 ];
-
-function shiftMonth({ year, month }: Month, delta: number): Month {
-  const index = year * 12 + (month - 1) + delta;
-  return { year: Math.floor(index / 12), month: (index % 12) + 1 };
-}
 
 /** Splits the month into Monday-first weeks; `null` pads the first and last week. */
 function toWeeks(days: DayInfo[]): (DayInfo | null)[][] {
@@ -49,16 +42,16 @@ export function CalendarScreen() {
   const today = toISODate(new Date());
   const [year, month] = today.split('-').map(Number) as [number, number];
 
-  const [cursor, setCursor] = useState<Month>({ year, month });
+  const [cursor, setCursor] = useState<Period>({ type: 'month', year, month });
   const [selected, setSelected] = useState<ISODate>(today);
-  const { start, end } = periodRange({ type: 'month', ...cursor });
+  const { start, end } = periodRange(cursor);
   const days = useDays(start, end);
   const selectedDay = days.find((day) => day.date === selected);
 
   const goToMonth = (delta: number) => {
-    const next = shiftMonth(cursor, delta);
+    const next = shiftPeriod(cursor, delta);
     setCursor(next);
-    const range = periodRange({ type: 'month', ...next });
+    const range = periodRange(next);
     setSelected(today >= range.start && today <= range.end ? today : range.start);
   };
 
