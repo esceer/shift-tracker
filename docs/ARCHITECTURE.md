@@ -53,7 +53,7 @@ For each date `d` in the period:
   - `adjustment` → `minutes`
   - `actual` → `minutes − scheduled(d)`
   - absence → 0
-- Virtual holiday entries are included in `absenceDays.holiday` and in report entry lists (marked as auto-synced).
+- Absence days (`absenceDays`) are counted only on scheduled working days. Synced holidays appear in report entry lists (marked as synced) except when they fall on a day off.
 - A period's balance is the sum of `delta(d)` over its dates. A quarter equals the sum of its three months.
 
 ## 2. Folder structure
