@@ -1,7 +1,8 @@
-import { router, Tabs } from 'expo-router';
+import { Redirect, router, Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import type { ColorValue } from 'react-native';
 
+import { useScheduleVersions } from '@/data/live';
 import { toISODate } from '@/domain/dates';
 import { FloatingTabBar } from '@/ui/components/FloatingTabBar';
 import { Icon, type IconName } from '@/ui/components/Icon';
@@ -14,6 +15,10 @@ function tabIcon(name: IconName) {
 
 export default function TabsLayout() {
   const { t } = useTranslation();
+  const hasSchedule = useScheduleVersions().length > 0;
+
+  // First launch: nothing works without a schedule, so set one up first.
+  if (!hasSchedule) return <Redirect href="/onboarding" />;
 
   return (
     <Tabs

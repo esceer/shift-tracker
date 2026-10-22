@@ -7,6 +7,59 @@
     "addChange": "Add change"
   },
   "common": {
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "back": "Back"
+  },
+  "duration": {
+    "hours": "{{h}}h",
+    "minutes": "{{m}}m",
+    "hoursMinutes": "{{h}}h {{m}}m"
+  },
+  "weekdays": {
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday",
+    "7": "Sunday"
+  },
+  "weekdaysShort": {
+    "1": "Mo",
+    "2": "Tu",
+    "3": "We",
+    "4": "Th",
+    "5": "Fr",
+    "6": "Sa",
+    "7": "Su"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "hu": "Magyar"
+  },
+  "welcome": {
+    "title": "Your hours,\nat a glance.",
+    "body": "Set your usual week once. Log changes when they happen. See where you stand every month and quarter.",
+    "sampleLabel": "This month",
+    "getStarted": "Get started"
+  },
+  "schedule": {
+    "title": "Your usual week",
+    "editTitle": "Work schedule",
+    "subtitle": "How many hours do you normally work each day?",
+    "editHint": "Changes count from the chosen date. Earlier days keep the old schedule.",
+    "off": "Off",
+    "less": "{{day}}: 15 minutes less",
+    "more": "{{day}}: 15 minutes more",
+    "perWeek": "Per week",
+    "countsFrom": "Counts from",
+    "step": "Step {{current}} of {{total}}",
+    "finish": "Finish",
+    "save": "Save"
+  },
+  "settings": {
+    "scheduleSummary": "{{total}} / week · since {{date}}",
+    "noSchedule": "Not set up yet"
   }
 }

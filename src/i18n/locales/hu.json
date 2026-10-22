@@ -7,6 +7,59 @@
     "addChange": "Változás hozzáadása"
   },
   "common": {
-    "comingSoon": "Hamarosan"
+    "comingSoon": "Hamarosan",
+    "back": "Vissza"
+  },
+  "duration": {
+    "hours": "{{h}} ó",
+    "minutes": "{{m}} p",
+    "hoursMinutes": "{{h}} ó {{m}} p"
+  },
+  "weekdays": {
+    "1": "Hétfő",
+    "2": "Kedd",
+    "3": "Szerda",
+    "4": "Csütörtök",
+    "5": "Péntek",
+    "6": "Szombat",
+    "7": "Vasárnap"
+  },
+  "weekdaysShort": {
+    "1": "H",
+    "2": "K",
+    "3": "Sze",
+    "4": "Cs",
+    "5": "P",
+    "6": "Szo",
+    "7": "V"
+  },
+  "language": {
+    "label": "Nyelv",
+    "en": "English",
+    "hu": "Magyar"
+  },
+  "welcome": {
+    "title": "Az óráid,\negy pillantásra.",
+    "body": "Egyszer add meg a szokásos hetedet. Rögzítsd a változásokat, amikor történnek. Lásd, hol tartasz minden hónapban és negyedévben.",
+    "sampleLabel": "Ebben a hónapban",
+    "getStarted": "Kezdjük"
+  },
+  "schedule": {
+    "title": "A szokásos heted",
+    "editTitle": "Munkarend",
+    "subtitle": "Naponta általában hány órát dolgozol?",
+    "editHint": "A változás a választott naptól érvényes. A korábbi napok a régi munkarendet tartják.",
+    "off": "Szabad",
+    "less": "{{day}}: 15 perccel kevesebb",
+    "more": "{{day}}: 15 perccel több",
+    "perWeek": "Hetente",
+    "countsFrom": "Érvényes ettől",
+    "step": "{{current}}. lépés / {{total}}",
+    "finish": "Kész",
+    "save": "Mentés"
+  },
+  "settings": {
+    "scheduleSummary": "{{total}} / hét · {{date}} óta",
+    "noSchedule": "Még nincs beállítva"
   }
 }

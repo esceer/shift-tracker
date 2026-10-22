@@ -11,7 +11,7 @@ export const resources = {
   hu: { translation: hu },
 } as const;
 
-const i18n = createInstance();
+export const i18n = createInstance();
 
 /** Starts i18n (first call) or switches language. `preference` null = follow the device. */
 export async function applyLanguage(preference: Language | null): Promise<void> {

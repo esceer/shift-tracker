@@ -12,6 +12,8 @@ export const colors = {
   inkSubtle: '#8A879C',
   onInk: '#FFFFFF',
   divider: '#F0EEF6',
+  /** Inactive progress/step indicator. */
+  track: '#D9D6E3',
 } as const;
 
 /** Pastel tile colours. Dark ink text works on all of them. */

@@ -61,16 +61,16 @@ For each date `d` in the period:
 ```
 src/app/                          # Expo Router routes only (re-export feature screens; no tests here)
   _layout.tsx                     # providers: DB, i18n, fonts; runs migrations
-  onboarding.tsx                  # first launch: language + initial schedule
+  onboarding/index.tsx            # first launch, step 1: welcome + language
+  onboarding/schedule.tsx         # first launch, step 2: usual week
   (tabs)/
-    _layout.tsx                   # bottom tab bar
+    _layout.tsx                   # floating tab bar; redirects to onboarding when no schedule exists
     index.tsx                     # Home: current-month balance + upcoming/recent entries
     calendar.tsx                  # month calendar, tap a day to edit
     reports.tsx                   # month/quarter switcher, report + export
     settings.tsx
   entry/[date].tsx                # modal/bottom sheet: create/edit/delete a day entry
-  schedule/index.tsx              # list of schedule versions
-  schedule/[id].tsx               # edit/create a version
+  schedule.tsx                    # edit the usual week from a chosen date (adds/updates a version)
 src/
   domain/
     types.ts
@@ -86,6 +86,7 @@ src/
     testDb.ts                     # in-memory sql.js db with migrations applied (tests only)
     schema.ts                     # drizzle tables: schedule_versions, day_entries, public_holidays, settings
     migrations/                   # drizzle-kit generated
+    live.ts                       # useLiveData(): sync read + re-read on table change; useScheduleVersions(), useSettings()
     repositories/
       scheduleRepository.ts
       entryRepository.ts
