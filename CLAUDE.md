@@ -1,4 +1,4 @@
-# Shift Tracker
+# Hetes (shift tracker)
 
 Android app (React Native / Expo, iOS-ready) for tracking a worker's over/under-time against a standard weekly schedule.
 Primary user: non-technical, Samsung flagship phone → clean, modern, friendly look.

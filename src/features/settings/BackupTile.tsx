@@ -24,7 +24,7 @@ export function BackupTile() {
     setMessage(null);
     try {
       const now = new Date();
-      const file = new File(Paths.cache, `shift-tracker-backup-${toISODate(now)}.json`);
+      const file = new File(Paths.cache, `hetes-backup-${toISODate(now)}.json`);
       file.create({ overwrite: true });
       await file.write(JSON.stringify(buildBackup(db, now), null, 2));
       await shareAsync(file.uri, { mimeType: 'application/json' });

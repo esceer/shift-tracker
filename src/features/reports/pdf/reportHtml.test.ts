@@ -2,7 +2,7 @@ import { buildReportHtml, type ReportDocument } from './reportHtml';
 
 const doc: ReportDocument = {
   language: 'en',
-  appName: 'Shift Tracker',
+  appName: 'Hetes',
   title: 'October 2026',
   generatedOn: 'Generated on 22 Oct 2026',
   summary: [
