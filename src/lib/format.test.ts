@@ -1,6 +1,6 @@
 import { i18n } from '@/i18n';
 
-import { formatDate, formatDuration } from './format';
+import { capitalize, formatDate, formatDuration, formatDurationCompact } from './format';
 
 describe('formatDuration', () => {
   const t = i18n.getFixedT('en');
@@ -27,5 +27,27 @@ describe('formatDate', () => {
   it('formats per language', () => {
     expect(formatDate('2026-10-01', 'en')).toBe('1 Oct 2026');
     expect(formatDate('2026-10-01', 'hu')).toBe('2026. okt. 1.');
+  });
+});
+
+describe('formatDurationCompact', () => {
+  const t = i18n.getFixedT('en');
+
+  it('keeps cells short', () => {
+    expect(formatDurationCompact(480, t)).toBe('8h');
+    expect(formatDurationCompact(90, t, { signed: true })).toBe('+1:30');
+    expect(formatDurationCompact(-45, t, { signed: true })).toBe('−0:45');
+    expect(formatDurationCompact(-120, t, { signed: true })).toBe('−2h');
+  });
+});
+
+describe('formatDate styles', () => {
+  it('formats day titles, short days and months', () => {
+    expect(formatDate('2026-10-28', 'en', 'dayTitle')).toBe('Wednesday, 28 Oct');
+    expect(formatDate('2026-10-28', 'hu', 'dayTitle')).toBe('október 28., szerda');
+    expect(formatDate('2026-10-28', 'en', 'dayShort')).toBe('Wed 28');
+    expect(formatDate('2026-10-28', 'hu', 'dayShort')).toBe('okt. 28.');
+    expect(capitalize(formatDate('2026-10-28', 'hu', 'month'))).toBe('Október');
+    expect(formatDate('2026-10-28', 'en', 'month')).toBe('October');
   });
 });

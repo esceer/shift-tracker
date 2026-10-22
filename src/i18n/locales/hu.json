@@ -61,5 +61,56 @@
   "settings": {
     "scheduleSummary": "{{total}} / hét · {{date}} óta",
     "noSchedule": "Még nincs beállítva"
+  },
+  "entryKind": {
+    "adjustment": "Módosítás",
+    "actual": "Tényleges",
+    "vacation": "Szabadság",
+    "sick": "Betegség",
+    "holiday": "Ünnep"
+  },
+  "day": {
+    "off": "szabad"
+  },
+  "entry": {
+    "titleNew": "Változás hozzáadása",
+    "titleEdit": "Változás szerkesztése",
+    "previousDay": "Előző nap",
+    "nextDay": "Következő nap",
+    "less": "Kevesebb",
+    "more": "Több",
+    "decrease": "15 perccel kevesebb",
+    "increase": "15 perccel több",
+    "previewAdjust": "Beosztás: {{scheduled}} · ennyit dolgozol: {{worked}}",
+    "previewActual": "Beosztás: {{scheduled}} · eltérés: {{delta}}",
+    "previewAbsence": "A beosztott {{scheduled}} ledolgozottnak számít",
+    "holidayHint": "Ünnepnap: {{name}}",
+    "note": "Megjegyzés",
+    "notePlaceholder": "pl. a főnök kérte, hogy maradjak tovább",
+    "save": "Mentés",
+    "delete": "Változás törlése"
+  },
+  "home": {
+    "thisMonth": "Ebben a hónapban",
+    "workedOf": "{{worked}} ledolgozva / {{scheduled}}",
+    "ahead": "Túlóra",
+    "behind": "Hiány",
+    "onTrack": "Rendben",
+    "nextChange": "Következő változás · {{day}}",
+    "noUpcoming": "Nincs tervezett változás",
+    "nextHoliday": "Ünnep · {{day}}",
+    "noHoliday": "Nincs közelgő ünnep",
+    "thisWeek": "Ezen a héten"
+  },
+  "calendar": {
+    "previousMonth": "Előző hónap",
+    "nextMonth": "Következő hónap",
+    "extra": "Több",
+    "less": "Kevesebb",
+    "noChange": "Nincs változás",
+    "scheduled": "Beosztás: {{scheduled}}",
+    "dayOff": "Szabadnap",
+    "add": "Hozzáadás",
+    "edit": "Szerkesztés"
   }
 }

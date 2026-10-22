@@ -9,6 +9,9 @@ import type { Language } from '@/i18n/language';
 
 const dateLocales = { en: enGB, hu };
 
+const signPrefix = (sign: number, signed: boolean) =>
+  !signed || sign === 0 ? '' : sign > 0 ? '+' : '−';
+
 /** "6h", "2h 45m", "45m" (localized). With `signed`, non-zero values get "+" or "−". */
 export function formatDuration(minutes: Minutes, t: TFunction, { signed = false } = {}): string {
   const { sign, hours: h, minutes: m } = splitDuration(minutes);
@@ -18,11 +21,40 @@ export function formatDuration(minutes: Minutes, t: TFunction, { signed = false 
       : m
         ? t('duration.minutes', { m })
         : t('duration.hours', { h });
-  if (!signed || sign === 0) return body;
-  return `${sign > 0 ? '+' : '−'}${body}`;
+  return signPrefix(sign, signed) + body;
 }
 
-/** Medium localized date, e.g. "1 Oct 2026" / "2026. okt. 1.". */
-export function formatDate(date: ISODate, language: Language): string {
-  return format(fromISODate(date), 'PP', { locale: dateLocales[language] });
+/** Short form for small cells: "8h", "+1:30", "−0:45". */
+export function formatDurationCompact(
+  minutes: Minutes,
+  t: TFunction,
+  { signed = false } = {},
+): string {
+  const { sign, hours: h, minutes: m } = splitDuration(minutes);
+  const body = m ? `${h}:${String(m).padStart(2, '0')}` : t('duration.hours', { h });
+  return signPrefix(sign, signed) + body;
+}
+
+const datePatterns = {
+  /** "1 Oct 2026" / "2026. okt. 1." */
+  medium: { en: 'PP', hu: 'PP' },
+  /** "Wednesday, 28 Oct" / "október 28., szerda" */
+  dayTitle: { en: 'EEEE, d MMM', hu: 'MMMM d., EEEE' },
+  /** "Wed 28" / "okt. 28." */
+  dayShort: { en: 'EEE d', hu: 'MMM d.' },
+  /** "October" / "október" */
+  month: { en: 'LLLL', hu: 'LLLL' },
+} as const;
+
+export type DateStyle = keyof typeof datePatterns;
+
+export function formatDate(date: ISODate, language: Language, style: DateStyle = 'medium'): string {
+  return format(fromISODate(date), datePatterns[style][language], {
+    locale: dateLocales[language],
+  });
+}
+
+/** Uppercases the first letter (Hungarian month and day names are lowercase). */
+export function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }

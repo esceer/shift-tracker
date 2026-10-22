@@ -1,14 +1,15 @@
 import { getTableName, type Table } from 'drizzle-orm';
 import { addDatabaseChangeListener } from 'expo-sqlite';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { ScheduleVersion } from '@/domain/types';
+import type { DayInfo, ISODate, Period, PeriodReport, ScheduleVersion } from '@/domain/types';
 
 import type { Database } from './database';
 import { db } from './db';
+import { readDayForEditing, readDays, readPeriodReport, readUpcoming } from './queries';
 import { listScheduleVersions } from './repositories/scheduleRepository';
 import { getSettings, type AppSettings } from './repositories/settingsRepository';
-import { scheduleVersions, settings } from './schema';
+import { dayEntries, publicHolidays, scheduleVersions, settings } from './schema';
 
 /**
  * Reads synchronously on first render and again whenever one of `tables` changes.
@@ -28,6 +29,30 @@ export function useLiveData<T>(tables: readonly Table[], read: (db: Database) =>
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- `version` is the change signal
   return useMemo(() => read(db), [read, version]);
+}
+
+const dayTables = [scheduleVersions, dayEntries, publicHolidays, settings];
+
+export function useDays(start: ISODate, end: ISODate): DayInfo[] {
+  const read = useCallback((db: Database) => readDays(db, start, end), [start, end]);
+  return useLiveData(dayTables, read);
+}
+
+export function usePeriodReport(period: Period): PeriodReport {
+  const key = JSON.stringify(period);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `key` captures the period by value
+  const read = useCallback((db: Database) => readPeriodReport(db, period), [key]);
+  return useLiveData(dayTables, read);
+}
+
+export function useUpcoming(today: ISODate) {
+  const read = useCallback((db: Database) => readUpcoming(db, today), [today]);
+  return useLiveData(dayTables, read);
+}
+
+export function useDayForEditing(date: ISODate) {
+  const read = useCallback((db: Database) => readDayForEditing(db, date), [date]);
+  return useLiveData(dayTables, read);
 }
 
 export function useScheduleVersions(): ScheduleVersion[] {

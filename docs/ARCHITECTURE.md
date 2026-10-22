@@ -86,6 +86,7 @@ src/
     testDb.ts                     # in-memory sql.js db with migrations applied (tests only)
     schema.ts                     # drizzle tables: schedule_versions, day_entries, public_holidays, settings
     migrations/                   # drizzle-kit generated
+    queries.ts                    # combined reads: readDays, readPeriodReport, readUpcoming, readDayForEditing
     live.ts                       # useLiveData(): sync read + re-read on table change; useScheduleVersions(), useSettings()
     repositories/
       scheduleRepository.ts

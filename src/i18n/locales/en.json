@@ -61,5 +61,56 @@
   "settings": {
     "scheduleSummary": "{{total}} / week · since {{date}}",
     "noSchedule": "Not set up yet"
+  },
+  "entryKind": {
+    "adjustment": "Adjust",
+    "actual": "Actual",
+    "vacation": "Vacation",
+    "sick": "Sick",
+    "holiday": "Holiday"
+  },
+  "day": {
+    "off": "off"
+  },
+  "entry": {
+    "titleNew": "Add change",
+    "titleEdit": "Edit change",
+    "previousDay": "Previous day",
+    "nextDay": "Next day",
+    "less": "Less",
+    "more": "More",
+    "decrease": "15 minutes less",
+    "increase": "15 minutes more",
+    "previewAdjust": "Scheduled {{scheduled}} · you'll work {{worked}}",
+    "previewActual": "Scheduled {{scheduled}} · difference {{delta}}",
+    "previewAbsence": "Scheduled {{scheduled}} counts as worked",
+    "holidayHint": "Public holiday: {{name}}",
+    "note": "Note",
+    "notePlaceholder": "e.g. Boss asked me to stay longer",
+    "save": "Save change",
+    "delete": "Delete change"
+  },
+  "home": {
+    "thisMonth": "This month",
+    "workedOf": "{{worked}} worked of {{scheduled}}",
+    "ahead": "Ahead",
+    "behind": "Behind",
+    "onTrack": "On track",
+    "nextChange": "Next change · {{day}}",
+    "noUpcoming": "No upcoming changes",
+    "nextHoliday": "Holiday · {{day}}",
+    "noHoliday": "No upcoming holidays",
+    "thisWeek": "This week"
+  },
+  "calendar": {
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "extra": "Extra",
+    "less": "Less",
+    "noChange": "No change",
+    "scheduled": "Scheduled {{scheduled}}",
+    "dayOff": "Day off",
+    "add": "Add",
+    "edit": "Edit"
   }
 }

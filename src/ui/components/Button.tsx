@@ -40,7 +40,12 @@ export function Button({ label, onPress, variant = 'primary', icon, disabled = f
 }
 
 const styles = StyleSheet.create({
-  button: { height: 58, borderRadius: radius.pill, justifyContent: 'center' },
+  button: {
+    height: 58,
+    borderRadius: radius.pill,
+    justifyContent: 'center',
+    paddingHorizontal: 22,
+  },
   content: {
     flexDirection: 'row',
     alignItems: 'center',

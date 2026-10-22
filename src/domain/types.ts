@@ -41,6 +41,14 @@ export interface PublicHoliday {
 /** A user entry, or a holiday entry derived from the synced public-holiday calendar. */
 export type EffectiveEntry = DayEntry & { synced: boolean };
 
+/** Everything the UI needs to show one day. */
+export interface DayInfo {
+  date: ISODate;
+  scheduledMinutes: Minutes;
+  entry: EffectiveEntry | undefined;
+  deltaMinutes: Minutes;
+}
+
 export type Period =
   | { type: 'month'; year: number; month: number } // month: 1–12
   | { type: 'quarter'; year: number; quarter: 1 | 2 | 3 | 4 };

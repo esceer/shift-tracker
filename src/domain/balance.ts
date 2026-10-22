@@ -1,6 +1,14 @@
 import { datesInPeriod } from './dates';
 import { scheduledMinutesOn } from './schedule';
-import type { EffectiveEntry, Minutes, Period, PeriodReport, ScheduleVersion } from './types';
+import type {
+  DayInfo,
+  EffectiveEntry,
+  ISODate,
+  Minutes,
+  Period,
+  PeriodReport,
+  ScheduleVersion,
+} from './types';
 
 /** Difference between worked and scheduled time for one day. */
 export function dayDelta(entry: EffectiveEntry | undefined, scheduled: Minutes): Minutes {
@@ -13,6 +21,20 @@ export function dayDelta(entry: EffectiveEntry | undefined, scheduled: Minutes):
     default:
       return 0; // absences: scheduled time counts as fulfilled
   }
+}
+
+/** Scheduled time, effective entry and delta for each date. `entries` must already be merged. */
+export function describeDays(
+  dates: readonly ISODate[],
+  schedules: readonly ScheduleVersion[],
+  entries: readonly EffectiveEntry[],
+): DayInfo[] {
+  const entriesByDate = new Map(entries.map((entry) => [entry.date, entry]));
+  return dates.map((date) => {
+    const scheduledMinutes = scheduledMinutesOn(schedules, date);
+    const entry = entriesByDate.get(date);
+    return { date, scheduledMinutes, entry, deltaMinutes: dayDelta(entry, scheduledMinutes) };
+  });
 }
 
 /** Builds the report for a month or quarter. `entries` must already be merged (see `mergeEntries`). */

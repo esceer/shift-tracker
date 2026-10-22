@@ -1,4 +1,13 @@
-import { datesInPeriod, monthsInPeriod, periodRange, quarterOfMonth, weekdayOf } from './dates';
+import {
+  addDays,
+  datesBetween,
+  datesInPeriod,
+  monthsInPeriod,
+  periodRange,
+  quarterOfMonth,
+  weekStart,
+  weekdayOf,
+} from './dates';
 
 describe('weekdayOf', () => {
   it('uses ISO weekdays (Mon = 1, Sun = 7)', () => {
@@ -46,6 +55,29 @@ describe('monthsInPeriod', () => {
       { type: 'month', year: 2026, month: 7 },
       { type: 'month', year: 2026, month: 8 },
       { type: 'month', year: 2026, month: 9 },
+    ]);
+  });
+});
+
+describe('addDays / weekStart / datesBetween', () => {
+  it('adds days across month and year ends', () => {
+    expect(addDays('2026-10-31', 1)).toBe('2026-11-01');
+    expect(addDays('2027-01-01', -1)).toBe('2026-12-31');
+  });
+
+  it('finds the Monday of the week', () => {
+    expect(weekStart('2026-10-22')).toBe('2026-10-19'); // Thu
+    expect(weekStart('2026-10-19')).toBe('2026-10-19'); // Mon
+    expect(weekStart('2026-10-25')).toBe('2026-10-19'); // Sun
+    expect(weekStart('2026-11-01')).toBe('2026-10-26'); // Sun, previous month
+  });
+
+  it('lists dates inclusively', () => {
+    expect(datesBetween('2026-10-30', '2026-11-02')).toEqual([
+      '2026-10-30',
+      '2026-10-31',
+      '2026-11-01',
+      '2026-11-02',
     ]);
   });
 });

@@ -1,4 +1,4 @@
-import { buildPeriodReport, dayDelta } from './balance';
+import { buildPeriodReport, dayDelta, describeDays } from './balance';
 import { monthsInPeriod } from './dates';
 import { mergeEntries } from './holidays';
 import { octoberEntries, standardSchedule } from './testFixtures';
@@ -106,6 +106,28 @@ describe('buildPeriodReport', () => {
       '2026-10-07',
       '2026-10-19',
       '2026-10-23',
+    ]);
+  });
+});
+
+describe('describeDays', () => {
+  it('combines schedule, entry and delta per day', () => {
+    const entries = mergeEntries(
+      octoberEntries,
+      [{ date: '2026-10-23', name: 'Nemzeti ünnep' }],
+      true,
+    );
+    const days = describeDays(
+      ['2026-10-14', '2026-10-15', '2026-10-22', '2026-10-23'],
+      [standardSchedule],
+      entries,
+    );
+
+    expect(days.map((d) => [d.date, d.scheduledMinutes, d.entry?.kind, d.deltaMinutes])).toEqual([
+      ['2026-10-14', 480, 'adjustment', -120],
+      ['2026-10-15', 480, 'actual', 90],
+      ['2026-10-22', 480, undefined, 0],
+      ['2026-10-23', 360, 'holiday', 0],
     ]);
   });
 });

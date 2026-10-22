@@ -1,4 +1,11 @@
-import { eachDayOfInterval, endOfMonth, format, getISODay, parseISO } from 'date-fns';
+import {
+  addDays as addDaysToDate,
+  eachDayOfInterval,
+  endOfMonth,
+  format,
+  getISODay,
+  parseISO,
+} from 'date-fns';
 
 import type { ISODate, Period, Weekday } from './types';
 
@@ -44,5 +51,19 @@ export function periodRange(period: Period): { start: ISODate; end: ISODate } {
 
 export function datesInPeriod(period: Period): ISODate[] {
   const { start, end } = periodRange(period);
+  return datesBetween(start, end);
+}
+
+/** All dates from `start` to `end`, inclusive. */
+export function datesBetween(start: ISODate, end: ISODate): ISODate[] {
   return eachDayOfInterval({ start: fromISODate(start), end: fromISODate(end) }).map(toISODate);
+}
+
+export function addDays(date: ISODate, days: number): ISODate {
+  return toISODate(addDaysToDate(fromISODate(date), days));
+}
+
+/** Monday of the week containing `date`. */
+export function weekStart(date: ISODate): ISODate {
+  return addDays(date, 1 - weekdayOf(date));
 }
