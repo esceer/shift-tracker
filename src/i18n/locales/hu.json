@@ -121,5 +121,14 @@
     "daysOff": "Távollétek",
     "changes": "Változások",
     "noChanges": "Ebben a hónapban nincs változás"
+  },
+  "holidays": {
+    "title": "Magyar ünnepnapok",
+    "description": "Az ünnepnapok automatikusan szabadnapnak számítanak.",
+    "lastSynced": "Utolsó frissítés: {{date}}",
+    "neverSynced": "Még nincs letöltve",
+    "syncNow": "Frissítés most",
+    "syncing": "Frissítés…",
+    "syncFailed": "Nem sikerült frissíteni. Ellenőrizd az internetkapcsolatot."
   }
 }

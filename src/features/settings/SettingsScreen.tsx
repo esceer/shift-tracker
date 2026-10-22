@@ -18,6 +18,8 @@ import { Text } from '@/ui/components/Text';
 import { Tile } from '@/ui/components/Tile';
 import { colors, spacing } from '@/ui/theme/tokens';
 
+import { HolidaySyncTile } from './HolidaySyncTile';
+
 const WEEKDAYS: Weekday[] = [1, 2, 3, 4, 5, 6, 7];
 const BAR_MAX_HEIGHT = 44;
 /** A day of this length (10h) fills the bar. */
@@ -87,6 +89,8 @@ export function SettingsScreen() {
           </View>
         )}
       </Tile>
+
+      <HolidaySyncTile />
 
       <Tile>
         <Text variant="heading">{t('language.label')}</Text>

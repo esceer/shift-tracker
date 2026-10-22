@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { db, useDatabaseMigrations } from '@/data/db';
+import { fetchHungarianHolidays } from '@/data/holidays/nagerClient';
+import { autoSyncHolidays } from '@/data/holidays/syncHolidays';
 import { getSettings } from '@/data/repositories/settingsRepository';
 import { applyLanguage } from '@/i18n';
 import { fontAssets } from '@/ui/theme/fonts';
@@ -21,6 +23,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (migrations.success) {
       applyLanguage(getSettings(db).language).finally(() => setLanguageReady(true));
+      void autoSyncHolidays(db, fetchHungarianHolidays, new Date());
     }
   }, [migrations.success]);
 

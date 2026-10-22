@@ -121,5 +121,14 @@
     "daysOff": "Days off",
     "changes": "Changes",
     "noChanges": "No changes in this month"
+  },
+  "holidays": {
+    "title": "Hungarian holidays",
+    "description": "Public holidays count as days off automatically.",
+    "lastSynced": "Last synced {{date}}",
+    "neverSynced": "Not synced yet",
+    "syncNow": "Sync now",
+    "syncing": "Syncing…",
+    "syncFailed": "Couldn't sync. Check your internet connection."
   }
 }
