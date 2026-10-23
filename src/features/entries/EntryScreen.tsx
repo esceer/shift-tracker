@@ -14,13 +14,12 @@ import { Button } from '@/ui/components/Button';
 import { Icon } from '@/ui/components/Icon';
 import { IconButton } from '@/ui/components/IconButton';
 import { Screen } from '@/ui/components/Screen';
-import { SegmentedControl } from '@/ui/components/SegmentedControl';
 import { Stepper } from '@/ui/components/Stepper';
 import { Text } from '@/ui/components/Text';
 import { Tile } from '@/ui/components/Tile';
 import { colors, radius, spacing, tints, typography } from '@/ui/theme/tokens';
 
-import { initialForm, setSign, stepForm, toEntry, workedMinutes } from './entryForm';
+import { initialForm, stepForm, toEntry, workedMinutes } from './entryForm';
 import { KindPicker } from './KindPicker';
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -39,7 +38,7 @@ function EntryEditor({ date }: { date: ISODate }) {
   const { scheduledMinutes: scheduled, entry, holidayName } = useDayForEditing(date);
   const [form, setForm] = useState(() => initialForm(entry, scheduled));
 
-  const toSave = toEntry(form, date);
+  const toSave = toEntry(form, date, scheduled);
   const worked = workedMinutes(form, scheduled);
   const duration = (minutes: number, signed = false) => formatDuration(minutes, t, { signed });
 
@@ -95,44 +94,26 @@ function EntryEditor({ date }: { date: ISODate }) {
       <KindPicker value={form.kind} onChange={(kind) => setForm({ ...form, kind })} />
 
       <Tile tint="lavender" style={styles.valueTile}>
-        {form.kind === 'adjustment' && (
-          <SegmentedControl
-            options={[
-              { value: 'less', label: t('entry.less') },
-              { value: 'more', label: t('entry.more') },
-            ]}
-            value={form.sign < 0 ? 'less' : 'more'}
-            onChange={(value) => setForm(setSign(form, value === 'less' ? -1 : 1, scheduled))}
-            background="rgba(255,255,255,0.55)"
-          />
-        )}
-
-        {(form.kind === 'adjustment' || form.kind === 'actual') && (
+        {form.kind === 'actual' && (
           <Stepper
-            valueLabel={
-              form.kind === 'adjustment'
-                ? duration(form.sign * form.adjustMinutes, true)
-                : duration(form.actualMinutes)
-            }
-            onDecrement={() => setForm(stepForm(form, -1, scheduled))}
-            onIncrement={() => setForm(stepForm(form, 1, scheduled))}
+            valueLabel={duration(form.workedMinutes)}
+            onDecrement={() => setForm(stepForm(form, -1))}
+            onIncrement={() => setForm(stepForm(form, 1))}
             decrementLabel={t('entry.decrease')}
             incrementLabel={t('entry.increase')}
-            variant="display"
+            variant="title"
             buttonBackground={colors.surface}
             buttonSize={56}
           />
         )}
 
         <Text color={colors.inkMuted} style={styles.preview}>
-          {form.kind === 'adjustment'
-            ? t('entry.previewAdjust', { scheduled: duration(scheduled), worked: duration(worked) })
-            : form.kind === 'actual'
-              ? t('entry.previewActual', {
-                  scheduled: duration(scheduled),
-                  delta: duration(worked - scheduled, true),
-                })
-              : t('entry.previewAbsence', { scheduled: duration(scheduled) })}
+          {form.kind === 'actual'
+            ? t('entry.previewActual', {
+                scheduled: duration(scheduled),
+                delta: duration(worked - scheduled, true),
+              })
+            : t('entry.previewAbsence', { scheduled: duration(scheduled) })}
         </Text>
       </Tile>
 

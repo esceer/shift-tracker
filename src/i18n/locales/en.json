@@ -14,6 +14,11 @@
     "minutes": "{{m}}m",
     "hoursMinutes": "{{h}}h {{m}}m"
   },
+  "durationShort": {
+    "hours": "{{h}}h",
+    "minutes": "{{m}}m",
+    "hoursMinutes": "{{h}}h {{m}}m"
+  },
   "weekdays": {
     "1": "Monday",
     "2": "Tuesday",
@@ -63,7 +68,7 @@
   },
   "entryKind": {
     "adjustment": "Adjust",
-    "actual": "Actual",
+    "actual": "Adjust",
     "vacation": "Vacation",
     "sick": "Sick",
     "holiday": "Holiday"
@@ -76,16 +81,13 @@
     "titleEdit": "Edit change",
     "previousDay": "Previous day",
     "nextDay": "Next day",
-    "less": "Less",
-    "more": "More",
     "decrease": "15 minutes less",
     "increase": "15 minutes more",
-    "previewAdjust": "Scheduled {{scheduled}} · you'll work {{worked}}",
-    "previewActual": "Scheduled {{scheduled}} · difference {{delta}}",
+    "previewActual": "Planned {{scheduled}} · difference {{delta}}",
     "previewAbsence": "Scheduled {{scheduled}} counts as worked",
     "holidayHint": "Public holiday: {{name}}",
     "note": "Note",
-    "notePlaceholder": "e.g. Boss asked me to stay longer",
+    "notePlaceholder": "e.g. I was asked to stay longer",
     "save": "Save change",
     "delete": "Delete change"
   },
@@ -99,7 +101,10 @@
     "noUpcoming": "No upcoming changes",
     "nextHoliday": "Holiday · {{day}}",
     "noHoliday": "No upcoming holidays",
-    "thisWeek": "This week"
+    "thisWeek": "This week",
+    "ofPlannedHours": "of the planned {{h}}h",
+    "ofPlannedHoursMinutes": "of the planned {{h}}h {{m}}m",
+    "ofPlannedMinutes": "of the planned {{m}}m"
   },
   "calendar": {
     "previousMonth": "Previous month",
@@ -110,7 +115,9 @@
     "scheduled": "Scheduled {{scheduled}}",
     "dayOff": "Day off",
     "add": "Add",
-    "edit": "Edit"
+    "edit": "Edit",
+    "plannedWorked": "Planned {{scheduled}} · worked {{worked}}",
+    "today": "Today"
   },
   "reports": {
     "month": "Month",

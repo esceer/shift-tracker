@@ -12,15 +12,23 @@ const dateLocales = { en: enGB, hu };
 const signPrefix = (sign: number, signed: boolean) =>
   !signed || sign === 0 ? '' : sign > 0 ? '+' : '−';
 
-/** "6h", "2h 45m", "45m" (localized). With `signed`, non-zero values get "+" or "−". */
-export function formatDuration(minutes: Minutes, t: TFunction, { signed = false } = {}): string {
+/**
+ * "6h", "2h 45m", "45m" / "6 óra", "2 óra 45 perc" (localized). With `signed`, non-zero values
+ * get "+" or "−"; `short` uses abbreviated units where they differ ("2 ó 45 p").
+ */
+export function formatDuration(
+  minutes: Minutes,
+  t: TFunction,
+  { signed = false, short = false } = {},
+): string {
   const { sign, hours: h, minutes: m } = splitDuration(minutes);
+  const keys = short ? 'durationShort' : 'duration';
   const body =
     h && m
-      ? t('duration.hoursMinutes', { h, m })
+      ? t(`${keys}.hoursMinutes`, { h, m })
       : m
-        ? t('duration.minutes', { m })
-        : t('duration.hours', { h });
+        ? t(`${keys}.minutes`, { m })
+        : t(`${keys}.hours`, { h });
   return signPrefix(sign, signed) + body;
 }
 
@@ -31,7 +39,7 @@ export function formatDurationCompact(
   { signed = false } = {},
 ): string {
   const { sign, hours: h, minutes: m } = splitDuration(minutes);
-  const body = m ? `${h}:${String(m).padStart(2, '0')}` : t('duration.hours', { h });
+  const body = m ? `${h}:${String(m).padStart(2, '0')}` : t('durationShort.hours', { h });
   return signPrefix(sign, signed) + body;
 }
 

@@ -60,7 +60,12 @@ export function DayCell({ day, label, onPress, today, selected, height = 54 }: P
       {absence ? (
         <Icon name={kindIcon[absence]} size={14} color={foreground} strokeWidth={2.2} />
       ) : (
-        <Text variant="caption" color={foreground} style={styles.value} numberOfLines={1}>
+        <Text
+          variant="caption"
+          color={!today && day.deltaMinutes > 0 ? colors.overtime : foreground}
+          style={styles.value}
+          numberOfLines={1}
+        >
           {value}
         </Text>
       )}

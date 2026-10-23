@@ -1,65 +1,59 @@
-import { initialForm, setSign, stepForm, toEntry, workedMinutes } from './entryForm';
+import { initialForm, stepForm, toEntry, workedMinutes } from './entryForm';
 
 const date = '2026-10-28';
 
 describe('entryForm', () => {
-  it('starts as an empty "more" adjustment with actual hours = schedule', () => {
-    expect(initialForm(undefined, 480)).toEqual({
-      kind: 'adjustment',
-      sign: 1,
-      adjustMinutes: 0,
-      actualMinutes: 480,
-      note: '',
+  it('starts as a change at the planned hours', () => {
+    expect(initialForm(undefined, 360)).toEqual({ kind: 'actual', workedMinutes: 360, note: '' });
+  });
+
+  it('loads older +/- adjustments as hours worked', () => {
+    const form = initialForm({ date, kind: 'adjustment', minutes: -120, note: 'Leave early' }, 480);
+    expect(form).toEqual({ kind: 'actual', workedMinutes: 360, note: 'Leave early' });
+  });
+
+  it('loads hours worked and absences', () => {
+    expect(initialForm({ date, kind: 'actual', minutes: 570, note: null }, 480).workedMinutes).toBe(
+      570,
+    );
+    expect(initialForm({ date, kind: 'vacation', minutes: null, note: null }, 360)).toMatchObject({
+      kind: 'vacation',
+      workedMinutes: 360,
     });
   });
 
-  it('loads an existing negative adjustment', () => {
-    const form = initialForm({ date, kind: 'adjustment', minutes: -120, note: 'Leave early' }, 480);
-    expect(form).toMatchObject({ sign: -1, adjustMinutes: 120, note: 'Leave early' });
-    expect(workedMinutes(form, 480)).toBe(360);
+  it('steps in 15 minutes between 0 and 24 hours', () => {
+    let form = initialForm(undefined, 30);
+    form = stepForm(form, -1);
+    expect(form.workedMinutes).toBe(15);
+    form = stepForm(form, -5);
+    expect(form.workedMinutes).toBe(0);
+    form = stepForm(form, 200);
+    expect(form.workedMinutes).toBe(1440);
   });
 
-  it('steps in 15 minutes and never goes below 0 or past the schedule for "less"', () => {
-    let form = setSign(initialForm(undefined, 60), -1, 60);
-    form = stepForm(form, 3, 60);
-    expect(form.adjustMinutes).toBe(45);
-    form = stepForm(form, 5, 60);
-    expect(form.adjustMinutes).toBe(60); // can't work less than 0h
-    form = stepForm(form, -10, 60);
-    expect(form.adjustMinutes).toBe(0);
+  it('counts absences as the planned hours', () => {
+    expect(workedMinutes({ kind: 'sick', workedMinutes: 0, note: '' }, 480)).toBe(480);
+    expect(workedMinutes({ kind: 'actual', workedMinutes: 300, note: '' }, 480)).toBe(300);
   });
 
-  it('shrinks the amount when switching to "less" on a short day', () => {
-    const more = stepForm(initialForm(undefined, 60), 8, 60); // +2h
-    expect(setSign(more, -1, 60).adjustMinutes).toBe(60);
-  });
-
-  it('caps a day at 24h', () => {
-    const form = stepForm({ ...initialForm(undefined, 480), kind: 'actual' }, 200, 480);
-    expect(form.actualMinutes).toBe(1440);
-  });
-
-  it('builds the entry to save', () => {
-    const less = stepForm(setSign(initialForm(undefined, 480), -1, 480), 8, 480);
-    expect(toEntry({ ...less, note: '  ' }, date)).toEqual({
+  it('saves hours worked, or the absence', () => {
+    const form = stepForm(initialForm(undefined, 480), -8);
+    expect(toEntry({ ...form, note: '  ' }, date, 480)).toEqual({
       date,
-      kind: 'adjustment',
-      minutes: -120,
+      kind: 'actual',
+      minutes: 360,
       note: null,
     });
-    expect(toEntry({ ...less, kind: 'vacation' }, date)).toEqual({
+    expect(toEntry({ ...form, kind: 'vacation' }, date, 480)).toEqual({
       date,
       kind: 'vacation',
       minutes: null,
       note: null,
     });
-    expect(toEntry({ ...less, kind: 'actual', actualMinutes: 570 }, date)).toMatchObject({
-      kind: 'actual',
-      minutes: 570,
-    });
   });
 
-  it('has nothing to save for a ±0 adjustment', () => {
-    expect(toEntry(initialForm(undefined, 480), date)).toBeNull();
+  it('has nothing to save when the hours equal the plan', () => {
+    expect(toEntry(initialForm(undefined, 480), date, 480)).toBeNull();
   });
 });

@@ -25,7 +25,10 @@ describe('formatDuration', () => {
   });
 
   it('uses the Hungarian units', () => {
-    expect(formatDuration(-165, i18n.getFixedT('hu'), { signed: true })).toBe('−2 ó 45 p');
+    const hu = i18n.getFixedT('hu');
+    expect(formatDuration(-165, hu, { signed: true })).toBe('−2 óra 45 perc');
+    expect(formatDuration(360, hu)).toBe('6 óra');
+    expect(formatDuration(-165, hu, { signed: true, short: true })).toBe('−2 ó 45 p');
   });
 });
 

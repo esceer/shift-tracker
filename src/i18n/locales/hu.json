@@ -10,6 +10,11 @@
     "back": "Vissza"
   },
   "duration": {
+    "hours": "{{h}} óra",
+    "minutes": "{{m}} perc",
+    "hoursMinutes": "{{h}} óra {{m}} perc"
+  },
+  "durationShort": {
     "hours": "{{h}} ó",
     "minutes": "{{m}} p",
     "hoursMinutes": "{{h}} ó {{m}} p"
@@ -63,7 +68,7 @@
   },
   "entryKind": {
     "adjustment": "Módosítás",
-    "actual": "Tényleges",
+    "actual": "Módosítás",
     "vacation": "Szabadság",
     "sick": "Betegség",
     "holiday": "Ünnep"
@@ -76,16 +81,13 @@
     "titleEdit": "Változás szerkesztése",
     "previousDay": "Előző nap",
     "nextDay": "Következő nap",
-    "less": "Kevesebb",
-    "more": "Több",
     "decrease": "15 perccel kevesebb",
     "increase": "15 perccel több",
-    "previewAdjust": "Beosztás: {{scheduled}} · ennyit dolgozol: {{worked}}",
     "previewActual": "Beosztás: {{scheduled}} · eltérés: {{delta}}",
     "previewAbsence": "A beosztott {{scheduled}} ledolgozottnak számít",
     "holidayHint": "Ünnepnap: {{name}}",
     "note": "Megjegyzés",
-    "notePlaceholder": "pl. a főnök kérte, hogy maradjak tovább",
+    "notePlaceholder": "pl. megkértek, hogy maradjak tovább",
     "save": "Mentés",
     "delete": "Változás törlése"
   },
@@ -99,7 +101,10 @@
     "noUpcoming": "Nincs tervezett változás",
     "nextHoliday": "Ünnep · {{day}}",
     "noHoliday": "Nincs közelgő ünnep",
-    "thisWeek": "Ezen a héten"
+    "thisWeek": "Ezen a héten",
+    "ofPlannedHours": "az előírt {{h}} órából",
+    "ofPlannedHoursMinutes": "az előírt {{h}} óra {{m}} percből",
+    "ofPlannedMinutes": "az előírt {{m}} percből"
   },
   "calendar": {
     "previousMonth": "Előző hónap",
@@ -110,7 +115,9 @@
     "scheduled": "Beosztás: {{scheduled}}",
     "dayOff": "Szabadnap",
     "add": "Hozzáadás",
-    "edit": "Szerkesztés"
+    "edit": "Szerkesztés",
+    "plannedWorked": "Beosztás: {{scheduled}} · ledolgozva: {{worked}}",
+    "today": "Ma"
   },
   "reports": {
     "month": "Hónap",

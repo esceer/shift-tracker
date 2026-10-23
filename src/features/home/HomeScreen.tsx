@@ -1,9 +1,11 @@
 import { router } from 'expo-router';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useDays, usePeriodReport, useUpcoming } from '@/data/live';
 import { addDays, toISODate, weekStart, weekdayOf } from '@/domain/dates';
+import { splitDuration } from '@/domain/duration';
 import type { ISODate } from '@/domain/types';
 import type { Language } from '@/i18n/language';
 import { capitalize, formatDate, formatDuration } from '@/lib/format';
@@ -13,6 +15,14 @@ import { Screen } from '@/ui/components/Screen';
 import { Text } from '@/ui/components/Text';
 import { Tile } from '@/ui/components/Tile';
 import { colors, radius, spacing } from '@/ui/theme/tokens';
+
+/** "of the planned 136h" / "az előírt 136 órából" (the Hungarian suffix depends on the unit). */
+function ofPlanned(minutes: number, t: TFunction): string {
+  const { hours: h, minutes: m } = splitDuration(minutes);
+  if (h && m) return t('home.ofPlannedHoursMinutes', { h, m });
+  if (m) return t('home.ofPlannedMinutes', { m });
+  return t('home.ofPlannedHours', { h });
+}
 
 const openEntry = (date: ISODate) => router.push({ pathname: '/entry/[date]', params: { date } });
 
@@ -38,25 +48,28 @@ export function HomeScreen() {
         <Text variant="display">{capitalize(formatDate(today, language, 'month'))}</Text>
       </View>
 
-      <Tile tint="lavender" style={styles.balanceTile}>
+      <Tile
+        tint="lavender"
+        style={styles.balanceTile}
+        onPress={() => router.navigate('/calendar')}
+        accessibilityLabel={`${t('home.thisMonth')}: ${duration(balance, true)}, ${t(`home.${status}`)}`}
+      >
         <Text variant="bodyStrong" color={colors.inkMuted}>
           {t('home.thisMonth')}
         </Text>
-        <Text variant="hero" numberOfLines={1} adjustsFontSizeToFit>
-          {duration(balance, true)}
+        <Text
+          variant="hero"
+          color={balance > 0 ? colors.overtime : colors.ink}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
+          {formatDuration(balance, t, { signed: true, short: true })}
         </Text>
-        <View style={styles.balanceFooter}>
-          <Text color={colors.inkMuted} style={styles.flex}>
-            {t('home.workedOf', {
-              worked: duration(report.workedMinutes),
-              scheduled: duration(report.scheduledMinutes),
-            })}
+        <Text color={colors.inkMuted}>{ofPlanned(report.scheduledMinutes, t)}</Text>
+        <View style={[styles.badge, balance > 0 && styles.badgeOvertime]}>
+          <Text variant="caption" color={colors.onInk}>
+            {t(`home.${status}`)}
           </Text>
-          <View style={styles.badge}>
-            <Text variant="caption" color={colors.onInk}>
-              {t(`home.${status}`)}
-            </Text>
-          </View>
         </View>
       </Tile>
 
@@ -74,7 +87,12 @@ export function HomeScreen() {
               <Text variant="label" color={colors.inkMuted}>
                 {t('home.nextChange', { day: formatDate(nextChange.date, language, 'dayShort') })}
               </Text>
-              <Text variant="title" numberOfLines={1} adjustsFontSizeToFit>
+              <Text
+                variant="title"
+                color={nextChange.deltaMinutes > 0 ? colors.overtime : colors.ink}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
                 {nextChange.entry.minutes === null
                   ? t(`entryKind.${nextChange.entry.kind}`)
                   : duration(nextChange.deltaMinutes, true)}
@@ -139,14 +157,14 @@ export function HomeScreen() {
 const styles = StyleSheet.create({
   header: { gap: 2, paddingHorizontal: 6, marginBottom: spacing.xs },
   balanceTile: { padding: 22, gap: 10 },
-  balanceFooter: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  flex: { flex: 1 },
   badge: {
+    alignSelf: 'flex-start',
     backgroundColor: colors.ink,
     borderRadius: radius.pill,
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
+  badgeOvertime: { backgroundColor: colors.overtime },
   row: { flexDirection: 'row', gap: 10 },
   smallTile: { flex: 1, gap: 14, minHeight: 150, justifyContent: 'space-between' },
   tileIcon: {

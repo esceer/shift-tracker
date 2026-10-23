@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useDays } from '@/data/live';
 import { periodRange, shiftPeriod, toISODate, weekdayOf } from '@/domain/dates';
@@ -10,6 +10,7 @@ import type { Language } from '@/i18n/language';
 import { capitalize, formatDate, formatDuration } from '@/lib/format';
 import { Button } from '@/ui/components/Button';
 import { DayCell } from '@/ui/components/DayCell';
+import { Icon } from '@/ui/components/Icon';
 import { IconButton } from '@/ui/components/IconButton';
 import { Screen } from '@/ui/components/Screen';
 import { Text } from '@/ui/components/Text';
@@ -19,8 +20,8 @@ import { colors, radius, spacing, tints, type Tint } from '@/ui/theme/tokens';
 
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 7] as const;
 const LEGEND: { tint: Tint; key: string }[] = [
-  { tint: 'sky', key: 'calendar.extra' },
-  { tint: 'peach', key: 'calendar.less' },
+  { tint: 'red', key: 'calendar.extra' },
+  { tint: 'sky', key: 'calendar.less' },
   { tint: 'mint', key: 'entryKind.holiday' },
   { tint: 'butter', key: 'entryKind.vacation' },
   { tint: 'pink', key: 'entryKind.sick' },
@@ -55,6 +56,11 @@ export function CalendarScreen() {
     setSelected(today >= range.start && today <= range.end ? today : range.start);
   };
 
+  const goToToday = () => {
+    setCursor({ type: 'month', year, month });
+    setSelected(today);
+  };
+
   return (
     <Screen withTabBar>
       <View style={styles.header}>
@@ -62,17 +68,28 @@ export function CalendarScreen() {
           <Text color={colors.inkMuted}>{cursor.year}</Text>
           <Text variant="display">{capitalize(formatDate(start, language, 'month'))}</Text>
         </View>
-        <View style={styles.headerButtons}>
-          <IconButton
-            icon="chevronLeft"
-            accessibilityLabel={t('calendar.previousMonth')}
-            onPress={() => goToMonth(-1)}
-          />
-          <IconButton
-            icon="chevronRight"
-            accessibilityLabel={t('calendar.nextMonth')}
-            onPress={() => goToMonth(1)}
-          />
+        <View style={styles.headerRight}>
+          <Pressable
+            onPress={goToToday}
+            accessibilityRole="button"
+            hitSlop={8}
+            style={({ pressed }) => [styles.todayButton, pressed && styles.pressed]}
+          >
+            <Icon name="calendar" size={16} strokeWidth={2.2} />
+            <Text variant="label">{t('calendar.today')}</Text>
+          </Pressable>
+          <View style={styles.headerButtons}>
+            <IconButton
+              icon="chevronLeft"
+              accessibilityLabel={t('calendar.previousMonth')}
+              onPress={() => goToMonth(-1)}
+            />
+            <IconButton
+              icon="chevronRight"
+              accessibilityLabel={t('calendar.nextMonth')}
+              onPress={() => goToMonth(1)}
+            />
+          </View>
         </View>
       </View>
 
@@ -127,7 +144,7 @@ function SelectedDay({ day, language }: { day: DayInfo; language: Language }) {
   const detail = !scheduledMinutes
     ? t('calendar.dayOff')
     : entry && entry.minutes !== null
-      ? t('entry.previewAdjust', {
+      ? t('calendar.plannedWorked', {
           scheduled: duration(scheduledMinutes),
           worked: duration(scheduledMinutes + deltaMinutes),
         })
@@ -159,7 +176,18 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingHorizontal: 6,
   },
+  headerRight: { alignItems: 'flex-end', gap: spacing.sm },
   headerButtons: { flexDirection: 'row', gap: spacing.sm },
+  todayButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 36,
+    paddingHorizontal: 14,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+  },
+  pressed: { opacity: 0.7 },
   grid: { paddingHorizontal: 12, paddingVertical: 14, gap: 5 },
   week: { flexDirection: 'row', gap: 5 },
   weekday: { flex: 1, textAlign: 'center' },

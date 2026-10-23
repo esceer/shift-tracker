@@ -7,8 +7,8 @@ Primary user: non-technical, Samsung flagship phone → clean, modern, friendly 
 
 - **Schedule**: weekly pattern (minutes per weekday), versioned by `effectiveFrom` date. Editing never rewrites past periods.
 - **Day entry** (max one per date), entered as either:
-  - `adjustment`: ± delta vs schedule (e.g. +4h, −2h)
-  - `actual`: hours actually worked → delta = actual − scheduled
+  - `actual` (UI: "Módosítás"/"Adjust"): hours actually worked, editor starts at the planned hours (0–24h) → delta = actual − scheduled
+  - `adjustment`: ± delta vs schedule. Legacy: still read (and in backups), never created; the editor converts it to `actual` on save
   - `vacation` | `sick` | `holiday`: whole-day absence, scheduled hours counted as fulfilled (delta 0)
 - Optional note per entry. Time in 15-min steps, stored as integer **minutes**.
 - **Balance is per period only** (month, quarter Q1–Q4); no carry-over. Period balance = sum of deltas for all dates in the period, future-dated entries included.
@@ -19,7 +19,7 @@ Primary user: non-technical, Samsung flagship phone → clean, modern, friendly 
 ## UI style: "Bento" (chosen)
 
 Pastel rounded tiles (radius 22–30) on an off-white background (`#F7F6FB`), dark ink text (`#1B1A2E`), floating bottom bar with a central "+" button.
-Fonts: Bricolage Grotesque (headings/numbers) + DM Sans (body). Colour per kind: extra `#D6E6FF`, less `#FFDCC7`, holiday `#CDEFDC`, vacation `#FFE7A8`, sick `#FFD6E8`, balance tile `#E4DDFF`.
+Fonts: Bricolage Grotesque (headings/numbers) + DM Sans (body). Colour per kind: overtime `#FFCFC9` (numbers `#C5221F`), less `#D6E6FF`, holiday `#CDEFDC`, vacation `#FFE7A8`, sick `#FFD6E8`, balance tile `#E4DDFF`.
 Light mode only (dark mode is out of scope for now). Design board: see `docs/ARCHITECTURE.md` §4.
 
 ## Stack
