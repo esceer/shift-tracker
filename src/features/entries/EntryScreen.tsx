@@ -44,9 +44,10 @@ function EntryEditor({ date }: { date: ISODate }) {
 
   const goToDay = (days: number) => router.setParams({ date: addDays(date, days) });
 
+  // Setting the hours back to the plan on a changed day removes the change.
   const save = () => {
-    if (!toSave) return;
-    saveEntry(db, toSave);
+    if (toSave) saveEntry(db, toSave);
+    else deleteEntry(db, date);
     router.back();
   };
 
@@ -131,7 +132,7 @@ function EntryEditor({ date }: { date: ISODate }) {
         />
       </Tile>
 
-      <Button label={t('entry.save')} onPress={save} disabled={!toSave} />
+      <Button label={t('entry.save')} onPress={save} disabled={!toSave && !entry} />
       {entry && <Button label={t('entry.delete')} onPress={remove} variant="secondary" />}
     </Screen>
   );
