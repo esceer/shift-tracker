@@ -54,16 +54,16 @@ export function HomeScreen() {
         onPress={() => router.navigate('/calendar')}
         accessibilityLabel={`${t('home.thisMonth')}: ${duration(balance, true)}, ${t(`home.${status}`)}`}
       >
-        <Text variant="bodyStrong" color={colors.inkMuted}>
+        <Text variant="bodyStrong" color={colors.inkMuted} style={styles.alignStart}>
           {t('home.thisMonth')}
         </Text>
         <Text variant="hero" style={styles.center} numberOfLines={1} adjustsFontSizeToFit>
           {formatDuration(balance, t, { signed: true, short: true })}
         </Text>
-        <Text color={colors.inkMuted} style={styles.center}>
+        <Text color={colors.inkMuted} style={styles.alignEnd}>
           {ofPlanned(report.scheduledMinutes, t)}
         </Text>
-        <View style={[styles.badge, balance > 0 && styles.badgeOvertime]}>
+        <View style={[styles.badge, styles.alignEnd, balance > 0 && styles.badgeOvertime]}>
           <Text variant="caption" color={colors.onInk}>
             {t(`home.${status}`)}
           </Text>
@@ -150,6 +150,8 @@ const styles = StyleSheet.create({
   header: { gap: 2, paddingHorizontal: 6, marginBottom: spacing.xs },
   balanceTile: { padding: 22, gap: 10, alignItems: 'center' },
   center: { textAlign: 'center' },
+  alignStart: { alignSelf: 'flex-start' },
+  alignEnd: { alignSelf: 'flex-end', textAlign: 'right' },
   badge: {
     backgroundColor: colors.ink,
     borderRadius: radius.pill,
