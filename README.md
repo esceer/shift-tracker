@@ -46,20 +46,20 @@ The config plugin `plugins/withReleaseSigning.js` wires these into the generated
    ```sh
    npm run build:apk
    ```
-   This runs a clean prebuild and writes the APK to `android/app/build/outputs/apk/release/app-release.apk`, built for 64-bit ARM (`arm64-v8a`), which covers current phones.
+   This runs a clean prebuild, builds for 64-bit ARM (`arm64-v8a`, which covers current phones) and copies the APK to `dist/tempo-<version>.apk` (e.g. `dist/tempo-1.1.0.apk`). Older versions stay in `dist/`.
 3. Install it. Updating over the installed app keeps the data.
-   - **Over USB:** `adb install -r android/app/build/outputs/apk/release/app-release.apk`
+   - **Over USB:** `adb install -r dist/tempo-1.1.0.apk`
    - **Without a cable:** copy the APK to the phone and open it. Allow "Install unknown apps" for the app you opened it from. If Play Protect warns that the app is unknown, choose to install anyway.
 
 ## Scripts
 
-| Command               | What it does                                                   |
-| --------------------- | -------------------------------------------------------------- |
-| `npm run android`     | Build and run the development app (`expo run:android`)         |
-| `npm start`           | Start Metro (`expo start`)                                     |
-| `npm run build:apk`   | Build the signed release APK (see [Release APK](#release-apk)) |
-| `npm test`            | Run the unit tests                                             |
-| `npm run typecheck`   | TypeScript check                                               |
-| `npm run lint`        | ESLint (Expo config + Prettier)                                |
-| `npm run format`      | Format with Prettier                                           |
-| `npm run db:generate` | Generate a migration after changing `src/data/schema.ts`       |
+| Command               | What it does                                                                |
+| --------------------- | --------------------------------------------------------------------------- |
+| `npm run android`     | Build and run the development app (`expo run:android`)                      |
+| `npm start`           | Start Metro (`expo start`)                                                  |
+| `npm run build:apk`   | Build the signed release APK into `dist/` (see [Release APK](#release-apk)) |
+| `npm test`            | Run the unit tests                                                          |
+| `npm run typecheck`   | TypeScript check                                                            |
+| `npm run lint`        | ESLint (Expo config + Prettier)                                             |
+| `npm run format`      | Format with Prettier                                                        |
+| `npm run db:generate` | Generate a migration after changing `src/data/schema.ts`                    |
