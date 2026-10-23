@@ -2,14 +2,22 @@ import { getTableName, type Table } from 'drizzle-orm';
 import { addDatabaseChangeListener } from 'expo-sqlite';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { DayInfo, ISODate, Period, PeriodReport, ScheduleVersion } from '@/domain/types';
+import type {
+  DayInfo,
+  ISODate,
+  Period,
+  PeriodReport,
+  PlannedDays,
+  ScheduleVersion,
+} from '@/domain/types';
 
 import type { Database } from './database';
 import { db } from './db';
 import { readDayForEditing, readDays, readPeriodReport, readUpcoming } from './queries';
+import { listPlannedDays } from './repositories/plannedDayRepository';
 import { listScheduleVersions } from './repositories/scheduleRepository';
 import { getSettings, type AppSettings } from './repositories/settingsRepository';
-import { dayEntries, publicHolidays, scheduleVersions, settings } from './schema';
+import { dayEntries, plannedDays, publicHolidays, scheduleVersions, settings } from './schema';
 
 /**
  * Reads synchronously on first render and again whenever one of `tables` changes.
@@ -31,7 +39,7 @@ export function useLiveData<T>(tables: readonly Table[], read: (db: Database) =>
   return useMemo(() => read(db), [read, version]);
 }
 
-const dayTables = [scheduleVersions, dayEntries, publicHolidays, settings];
+const dayTables = [scheduleVersions, plannedDays, dayEntries, publicHolidays, settings];
 
 export function useDays(start: ISODate, end: ISODate): DayInfo[] {
   const read = useCallback((db: Database) => readDays(db, start, end), [start, end]);
@@ -53,6 +61,12 @@ export function useUpcoming(today: ISODate) {
 export function useDayForEditing(date: ISODate) {
   const read = useCallback((db: Database) => readDayForEditing(db, date), [date]);
   return useLiveData(dayTables, read);
+}
+
+/** Monthly-plan days in an inclusive range (empty when the weekly schedule applies). */
+export function usePlannedDays(start: ISODate, end: ISODate): PlannedDays {
+  const read = useCallback((db: Database) => listPlannedDays(db, { start, end }), [start, end]);
+  return useLiveData([plannedDays], read);
 }
 
 export function useScheduleVersions(): ScheduleVersion[] {

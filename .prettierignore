@@ -5,3 +5,4 @@ android
 ios
 package-lock.json
 coverage
+src/data/migrations

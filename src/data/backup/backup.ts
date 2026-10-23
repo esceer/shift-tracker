@@ -4,9 +4,10 @@ import type { DayEntry, ScheduleVersion } from '@/domain/types';
 
 import type { Database } from '../database';
 import { listEntries } from '../repositories/entryRepository';
+import { listPlannedDays } from '../repositories/plannedDayRepository';
 import { listScheduleVersions, toScheduleRow } from '../repositories/scheduleRepository';
 import { getSettings, setSetting } from '../repositories/settingsRepository';
-import { dayEntries, scheduleVersions } from '../schema';
+import { dayEntries, plannedDays, scheduleVersions } from '../schema';
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const dayMinutes = z
@@ -56,6 +57,8 @@ const backupSchema = z.object({
       }),
     ]),
   ),
+  // Added after the first release; older backups have no monthly plans.
+  plannedDays: z.array(z.object({ date: isoDate, minutes: dayMinutes })).default([]),
   settings: z.object({
     language: z.enum(['en', 'hu']).nullable(),
     holidaySyncEnabled: z.boolean(),
@@ -73,6 +76,7 @@ export function buildBackup(db: Database, now: Date): Backup {
     exportedAt: now.toISOString(),
     scheduleVersions: listScheduleVersions(db),
     dayEntries: listEntries(db),
+    plannedDays: [...listPlannedDays(db)].map(([date, minutes]) => ({ date, minutes })),
     settings: { language, holidaySyncEnabled },
   };
 }
@@ -89,6 +93,7 @@ export function restoreBackup(db: Database, json: unknown): void {
   db.transaction((tx) => {
     tx.delete(dayEntries).run();
     tx.delete(scheduleVersions).run();
+    tx.delete(plannedDays).run();
     if (backup.scheduleVersions.length > 0) {
       tx.insert(scheduleVersions)
         .values(backup.scheduleVersions.map((v) => toScheduleRow(v as ScheduleVersion)))
@@ -98,6 +103,9 @@ export function restoreBackup(db: Database, json: unknown): void {
       tx.insert(dayEntries)
         .values(backup.dayEntries as DayEntry[])
         .run();
+    }
+    if (backup.plannedDays.length > 0) {
+      tx.insert(plannedDays).values(backup.plannedDays).run();
     }
     setSetting(tx, 'language', backup.settings.language);
     setSetting(tx, 'holidaySyncEnabled', backup.settings.holidaySyncEnabled);

@@ -6,6 +6,7 @@ import type { DayInfo, ISODate, Period, PeriodReport, PublicHoliday } from '@/do
 import type { Database } from './database';
 import { getEntry, listEntries } from './repositories/entryRepository';
 import { listHolidays } from './repositories/holidayRepository';
+import { listPlannedDays } from './repositories/plannedDayRepository';
 import { listScheduleVersions } from './repositories/scheduleRepository';
 import { getSettings } from './repositories/settingsRepository';
 
@@ -22,14 +23,17 @@ export function readDays(db: Database, start: ISODate, end: ISODate): DayInfo[] 
     datesBetween(start, end),
     listScheduleVersions(db),
     effectiveEntries(db, { start, end }),
+    listPlannedDays(db, { start, end }),
   );
 }
 
 export function readPeriodReport(db: Database, period: Period): PeriodReport {
+  const range = periodRange(period);
   return buildPeriodReport(
     period,
     listScheduleVersions(db),
-    effectiveEntries(db, periodRange(period)),
+    effectiveEntries(db, range),
+    listPlannedDays(db, range),
   );
 }
 

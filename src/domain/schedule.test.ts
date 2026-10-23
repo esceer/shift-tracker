@@ -33,3 +33,20 @@ describe('scheduledMinutesOn', () => {
     expect(scheduledMinutesOn([], '2026-10-21')).toBe(0);
   });
 });
+
+describe('scheduledMinutesOn with a monthly plan', () => {
+  const plan = new Map([
+    ['2026-10-19', 300], // Monday, normally off
+    ['2026-10-20', 0], // Tuesday, normally 6h
+  ]);
+
+  it('uses the planned minutes for planned dates, the weekly schedule otherwise', () => {
+    expect(scheduledMinutesOn([standardSchedule], '2026-10-19', plan)).toBe(300);
+    expect(scheduledMinutesOn([standardSchedule], '2026-10-20', plan)).toBe(0);
+    expect(scheduledMinutesOn([standardSchedule], '2026-10-21', plan)).toBe(480);
+  });
+
+  it('applies even before the first weekly version', () => {
+    expect(scheduledMinutesOn([], '2026-10-19', plan)).toBe(300);
+  });
+});

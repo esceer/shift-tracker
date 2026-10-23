@@ -42,3 +42,13 @@ export const settings = sqliteTable('settings', {
   key: text('key').primaryKey(),
   value: text('value').notNull(),
 });
+
+/** Day-by-day plan for months that don't follow the weekly schedule (every day of the month). */
+export const plannedDays = sqliteTable(
+  'planned_days',
+  {
+    date: text('date').primaryKey(),
+    minutes: integer('minutes').notNull(),
+  },
+  (table) => [check('planned_days_minutes_range', sql`${table.minutes} BETWEEN 0 AND 1440`)],
+);

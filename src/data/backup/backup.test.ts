@@ -4,6 +4,7 @@ import { octoberEntries, standardSchedule } from '@/domain/testFixtures';
 import type { Database } from '../database';
 import { listEntries, saveEntry } from '../repositories/entryRepository';
 import { listHolidays, replaceHolidaysForYear } from '../repositories/holidayRepository';
+import { listPlannedDays, saveMonthPlan } from '../repositories/plannedDayRepository';
 import { listScheduleVersions, saveScheduleVersion } from '../repositories/scheduleRepository';
 import { getSettings, setSetting } from '../repositories/settingsRepository';
 import { createTestDb } from '../testDb';
@@ -16,6 +17,7 @@ async function seededDb(): Promise<Database> {
   saveScheduleVersion(db, standardSchedule);
   octoberEntries.forEach((entry) => saveEntry(db, entry));
   saveEntry(db, { date: '2026-10-06', kind: 'vacation', minutes: null, note: null });
+  saveMonthPlan(db, 2026, 11, [{ date: '2026-11-02', minutes: 300 }]);
   setSetting(db, 'language', 'hu');
   setSetting(db, 'holidaySyncEnabled', true);
   return db;
@@ -31,6 +33,7 @@ describe('backup', () => {
 
     expect(listScheduleVersions(target)).toEqual(listScheduleVersions(source));
     expect(listEntries(target)).toEqual(listEntries(source));
+    expect(listPlannedDays(target)).toEqual(listPlannedDays(source));
     expect(getSettings(target)).toMatchObject({ language: 'hu', holidaySyncEnabled: true });
   });
 
@@ -54,5 +57,14 @@ describe('backup', () => {
     expect(() => restoreBackup(target, broken)).toThrow(InvalidBackupError);
 
     expect(listEntries(target)).toEqual(before);
+  });
+});
+
+describe('backup compatibility', () => {
+  it('restores backups made before monthly plans existed', async () => {
+    const target = await createTestDb();
+    const { plannedDays: _omitted, ...oldBackup } = buildBackup(await seededDb(), now);
+    restoreBackup(target, oldBackup);
+    expect(listPlannedDays(target).size).toBe(0);
   });
 });

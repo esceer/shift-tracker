@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { db } from '@/data/db';
-import { useScheduleVersions } from '@/data/live';
+import { usePlannedDays, useScheduleVersions } from '@/data/live';
 import { setSetting } from '@/data/repositories/settingsRepository';
-import { toISODate } from '@/domain/dates';
+import { periodRange, toISODate } from '@/domain/dates';
 import { activeScheduleOn } from '@/domain/schedule';
 import type { Weekday } from '@/domain/types';
 import { applyLanguage } from '@/i18n';
 import type { Language } from '@/i18n/language';
-import { formatDate, formatDuration } from '@/lib/format';
+import { capitalize, formatDate, formatDuration } from '@/lib/format';
 import { Icon } from '@/ui/components/Icon';
 import { Screen } from '@/ui/components/Screen';
 import { SegmentedControl } from '@/ui/components/SegmentedControl';
@@ -29,7 +29,11 @@ const BAR_FULL_MINUTES = 600;
 export function SettingsScreen() {
   const { t, i18n } = useTranslation();
   const language = i18n.language as Language;
-  const active = activeScheduleOn(useScheduleVersions(), toISODate(new Date()));
+  const today = toISODate(new Date());
+  const active = activeScheduleOn(useScheduleVersions(), today);
+  const [year, month] = today.split('-').map(Number) as [number, number];
+  const thisMonth = periodRange({ type: 'month', year, month });
+  const hasMonthPlan = usePlannedDays(thisMonth.start, thisMonth.end).size > 0;
 
   const chooseLanguage = (value: Language) => {
     setSetting(db, 'language', value);
@@ -61,6 +65,13 @@ export function SettingsScreen() {
             <Text variant="label" color={colors.inkMuted}>
               {summary}
             </Text>
+            {hasMonthPlan && (
+              <Text variant="label">
+                {t('settings.monthPlanActive', {
+                  month: capitalize(formatDate(thisMonth.start, language, 'month')),
+                })}
+              </Text>
+            )}
           </View>
           <View style={styles.chevron}>
             <Icon name="chevronRight" size={18} strokeWidth={2.2} />

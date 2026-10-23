@@ -9,6 +9,9 @@ export type Weekday = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export type WeeklyMinutes = Record<Weekday, Minutes>;
 
+/** Planned minutes per date from monthly plans; these dates ignore the weekly schedule. */
+export type PlannedDays = ReadonlyMap<ISODate, Minutes>;
+
 export interface ScheduleVersion {
   id: string;
   /** Active from this date until the next version's `effectiveFrom`. */

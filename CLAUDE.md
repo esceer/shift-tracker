@@ -6,6 +6,7 @@ Primary user: non-technical, Samsung flagship phone → clean, modern, friendly 
 ## Product rules
 
 - **Schedule**: weekly pattern (minutes per weekday), versioned by `effectiveFrom` date. Editing never rewrites past periods.
+- **Monthly plan** (optional, per month): planned minutes for every day of that month (`planned_days`); replaces the weekly schedule for that month only. Starts from the weekly values; can be removed.
 - **Day entry** (max one per date), entered as either:
   - `actual` (UI: "Módosítás"/"Adjust"): hours actually worked, editor starts at the planned hours (0–24h) → delta = actual − scheduled
   - `adjustment`: ± delta vs schedule. Legacy: still read (and in backups), never created; the editor converts it to `actual` on save

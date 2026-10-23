@@ -131,3 +131,14 @@ describe('describeDays', () => {
     ]);
   });
 });
+
+describe('buildPeriodReport with a monthly plan', () => {
+  it('replaces the weekly schedule on planned dates', () => {
+    const plan = new Map([
+      ['2026-10-19', 300], // Mon: 0 → 5h
+      ['2026-10-20', 0], // Tue: 6h → 0
+    ]);
+    const report = buildPeriodReport(october, [standardSchedule], [], plan);
+    expect(report.scheduledMinutes).toBe(126 * 60 + 300 - 360);
+  });
+});

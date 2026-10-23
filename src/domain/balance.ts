@@ -7,6 +7,7 @@ import type {
   Minutes,
   Period,
   PeriodReport,
+  PlannedDays,
   ScheduleVersion,
 } from './types';
 
@@ -28,10 +29,11 @@ export function describeDays(
   dates: readonly ISODate[],
   schedules: readonly ScheduleVersion[],
   entries: readonly EffectiveEntry[],
+  plannedDays?: PlannedDays,
 ): DayInfo[] {
   const entriesByDate = new Map(entries.map((entry) => [entry.date, entry]));
   return dates.map((date) => {
-    const scheduledMinutes = scheduledMinutesOn(schedules, date);
+    const scheduledMinutes = scheduledMinutesOn(schedules, date, plannedDays);
     const entry = entriesByDate.get(date);
     return { date, scheduledMinutes, entry, deltaMinutes: dayDelta(entry, scheduledMinutes) };
   });
@@ -42,6 +44,7 @@ export function buildPeriodReport(
   period: Period,
   schedules: readonly ScheduleVersion[],
   entries: readonly EffectiveEntry[],
+  plannedDays?: PlannedDays,
 ): PeriodReport {
   const entriesByDate = new Map(entries.map((entry) => [entry.date, entry]));
   const report: PeriodReport = {
@@ -54,7 +57,7 @@ export function buildPeriodReport(
   };
 
   for (const date of datesInPeriod(period)) {
-    const scheduled = scheduledMinutesOn(schedules, date);
+    const scheduled = scheduledMinutesOn(schedules, date, plannedDays);
     const entry = entriesByDate.get(date);
     const delta = dayDelta(entry, scheduled);
 

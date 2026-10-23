@@ -1,5 +1,6 @@
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -10,11 +11,13 @@ import { formatDate, formatDuration } from '@/lib/format';
 import { Button } from '@/ui/components/Button';
 import { IconButton } from '@/ui/components/IconButton';
 import { Screen } from '@/ui/components/Screen';
+import { SegmentedControl } from '@/ui/components/SegmentedControl';
 import { Stepper } from '@/ui/components/Stepper';
 import { Text } from '@/ui/components/Text';
 import { Tile } from '@/ui/components/Tile';
 import { colors, radius, spacing } from '@/ui/theme/tokens';
 
+import { MonthPlanForm } from './MonthPlanForm';
 import { useScheduleEditor } from './useScheduleEditor';
 
 const WEEKDAYS: Weekday[] = [1, 2, 3, 4, 5, 6, 7];
@@ -23,22 +26,9 @@ type Props = { mode: 'onboarding' | 'edit' };
 
 /** "Your usual week" (first launch, step 2) and the schedule editor in Settings. */
 export function ScheduleEditorScreen({ mode }: Props) {
-  const { t, i18n } = useTranslation();
-  const editor = useScheduleEditor(mode);
+  const { t } = useTranslation();
   const onboarding = mode === 'onboarding';
-
-  const pickDate = () =>
-    DateTimePickerAndroid.open({
-      value: fromISODate(editor.effectiveFrom),
-      mode: 'date',
-      onValueChange: (_event, date) => editor.setEffectiveFrom(toISODate(date)),
-    });
-
-  const save = () => {
-    editor.save();
-    if (onboarding) router.replace('/');
-    else router.back();
-  };
+  const [kind, setKind] = useState<'weekly' | 'monthly'>('weekly');
 
   return (
     <Screen>
@@ -63,10 +53,51 @@ export function ScheduleEditorScreen({ mode }: Props) {
       <View style={styles.intro}>
         <Text variant="title">{onboarding ? t('schedule.title') : t('schedule.editTitle')}</Text>
         <Text color={colors.inkMuted}>
-          {onboarding ? t('schedule.subtitle') : t('schedule.editHint')}
+          {onboarding
+            ? t('schedule.subtitle')
+            : kind === 'weekly'
+              ? t('schedule.editHint')
+              : t('schedule.monthHint')}
         </Text>
       </View>
 
+      {!onboarding && (
+        <SegmentedControl
+          options={[
+            { value: 'weekly', label: t('schedule.weekly') },
+            { value: 'monthly', label: t('schedule.monthly') },
+          ]}
+          value={kind}
+          onChange={setKind}
+        />
+      )}
+
+      {kind === 'weekly' ? <WeeklyScheduleForm mode={mode} /> : <MonthPlanForm />}
+    </Screen>
+  );
+}
+
+/** Hours per weekday, valid from a chosen date. */
+function WeeklyScheduleForm({ mode }: Props) {
+  const { t, i18n } = useTranslation();
+  const editor = useScheduleEditor(mode);
+  const onboarding = mode === 'onboarding';
+
+  const pickDate = () =>
+    DateTimePickerAndroid.open({
+      value: fromISODate(editor.effectiveFrom),
+      mode: 'date',
+      onValueChange: (_event, date) => editor.setEffectiveFrom(toISODate(date)),
+    });
+
+  const save = () => {
+    editor.save();
+    if (onboarding) router.replace('/');
+    else router.back();
+  };
+
+  return (
+    <>
       <Tile style={styles.days}>
         {WEEKDAYS.map((weekday) => {
           const day = t(`weekdays.${weekday}`);
@@ -114,7 +145,7 @@ export function ScheduleEditorScreen({ mode }: Props) {
       </View>
 
       <Button label={onboarding ? t('schedule.finish') : t('schedule.save')} onPress={save} />
-    </Screen>
+    </>
   );
 }
 

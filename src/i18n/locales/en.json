@@ -60,11 +60,18 @@
     "countsFrom": "Counts from",
     "step": "Step {{current}} of {{total}}",
     "finish": "Finish",
-    "save": "Save"
+    "save": "Save",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "monthHint": "Set the hours for every day of the month. It replaces the weekly schedule for that month only.",
+    "perMonth": "This month",
+    "useWeekly": "Use the weekly schedule for this month",
+    "dayLabel": "{{weekday}} {{day}}"
   },
   "settings": {
     "scheduleSummary": "{{total}} / week · since {{date}}",
-    "noSchedule": "Not set up yet"
+    "noSchedule": "Not set up yet",
+    "monthPlanActive": "{{month}}: monthly plan"
   },
   "entryKind": {
     "adjustment": "Adjust",

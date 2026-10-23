@@ -1,5 +1,5 @@
 import { weekdayOf } from './dates';
-import type { ISODate, Minutes, ScheduleVersion } from './types';
+import type { ISODate, Minutes, PlannedDays, ScheduleVersion } from './types';
 
 /** The version active on `date`: the one with the latest `effectiveFrom` on or before it. */
 export function activeScheduleOn(
@@ -18,7 +18,13 @@ export function activeScheduleOn(
   return active;
 }
 
-/** Scheduled minutes for `date`; 0 before the first version. */
-export function scheduledMinutesOn(versions: readonly ScheduleVersion[], date: ISODate): Minutes {
+/** Scheduled minutes for `date`: a monthly plan wins over the weekly schedule; 0 before any. */
+export function scheduledMinutesOn(
+  versions: readonly ScheduleVersion[],
+  date: ISODate,
+  plannedDays: PlannedDays = new Map(),
+): Minutes {
+  const planned = plannedDays.get(date);
+  if (planned !== undefined) return planned;
   return activeScheduleOn(versions, date)?.minutesByWeekday[weekdayOf(date)] ?? 0;
 }

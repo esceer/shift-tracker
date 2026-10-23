@@ -42,6 +42,8 @@ export function Stepper({
         variant={variant}
         color={valueColor}
         style={styles.value}
+        numberOfLines={1}
+        adjustsFontSizeToFit
         accessibilityLiveRegion="polite"
       >
         {valueLabel}

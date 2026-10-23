@@ -60,11 +60,18 @@
     "countsFrom": "Érvényes ettől",
     "step": "{{current}}. lépés / {{total}}",
     "finish": "Kész",
-    "save": "Mentés"
+    "save": "Mentés",
+    "weekly": "Heti",
+    "monthly": "Havi",
+    "monthHint": "Állítsd be a hónap minden napját. Csak erre a hónapra írja felül a heti munkarendet.",
+    "perMonth": "Ebben a hónapban",
+    "useWeekly": "Heti munkarend erre a hónapra",
+    "dayLabel": "{{day}}. {{weekday}}"
   },
   "settings": {
     "scheduleSummary": "{{total}} / hét · {{date}} óta",
-    "noSchedule": "Még nincs beállítva"
+    "noSchedule": "Még nincs beállítva",
+    "monthPlanActive": "{{month}}: havi beosztás"
   },
   "entryKind": {
     "adjustment": "Módosítás",

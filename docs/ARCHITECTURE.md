@@ -84,7 +84,7 @@ src/
     database.ts                   # `Database` type: any sync Drizzle SQLite db (expo-sqlite in app, sql.js in tests)
     db.ts                         # open expo-sqlite, drizzle instance, useDatabaseMigrations()
     testDb.ts                     # in-memory sql.js db with migrations applied (tests only)
-    schema.ts                     # drizzle tables: schedule_versions, day_entries, public_holidays, settings
+    schema.ts                     # drizzle tables: schedule_versions, day_entries, public_holidays, planned_days, settings
     migrations/                   # drizzle-kit generated
     queries.ts                    # combined reads: readDays, readPeriodReport, readUpcoming, readDayForEditing
     live.ts                       # useLiveData(): sync read + re-read on table change; useScheduleVersions(), useSettings()
