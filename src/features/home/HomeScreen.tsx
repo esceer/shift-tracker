@@ -57,12 +57,7 @@ export function HomeScreen() {
         <Text variant="bodyStrong" color={colors.inkMuted}>
           {t('home.thisMonth')}
         </Text>
-        <Text
-          variant="hero"
-          color={balance > 0 ? colors.overtime : colors.ink}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-        >
+        <Text variant="hero" numberOfLines={1} adjustsFontSizeToFit>
           {formatDuration(balance, t, { signed: true, short: true })}
         </Text>
         <Text color={colors.inkMuted}>{ofPlanned(report.scheduledMinutes, t)}</Text>
@@ -87,12 +82,7 @@ export function HomeScreen() {
               <Text variant="label" color={colors.inkMuted}>
                 {t('home.nextChange', { day: formatDate(nextChange.date, language, 'dayShort') })}
               </Text>
-              <Text
-                variant="title"
-                color={nextChange.deltaMinutes > 0 ? colors.overtime : colors.ink}
-                numberOfLines={1}
-                adjustsFontSizeToFit
-              >
+              <Text variant="title" numberOfLines={1} adjustsFontSizeToFit>
                 {nextChange.entry.minutes === null
                   ? t(`entryKind.${nextChange.entry.kind}`)
                   : duration(nextChange.deltaMinutes, true)}

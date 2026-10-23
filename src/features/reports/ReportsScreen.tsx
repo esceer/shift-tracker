@@ -97,13 +97,7 @@ export function ReportsScreen() {
             background="rgba(255,255,255,0.6)"
           />
         </View>
-        <Text
-          variant="hero"
-          color={report.balanceMinutes > 0 ? colors.overtime : colors.ink}
-          style={styles.center}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-        >
+        <Text variant="hero" style={styles.center} numberOfLines={1} adjustsFontSizeToFit>
           {duration(report.balanceMinutes, true)}
         </Text>
         <Text color={colors.inkMuted} style={styles.center}>
@@ -171,12 +165,7 @@ function MonthTile({ month, onPress }: { month: MonthPeriod; onPress: () => void
       <Text variant="label" color={colors.inkMuted} numberOfLines={1}>
         {name}
       </Text>
-      <Text
-        variant="heading"
-        color={balanceMinutes > 0 ? colors.overtime : colors.ink}
-        numberOfLines={1}
-        adjustsFontSizeToFit
-      >
+      <Text variant="heading" numberOfLines={1} adjustsFontSizeToFit>
         {value}
       </Text>
     </Tile>
@@ -230,14 +219,7 @@ function MonthChanges({ month }: { month: MonthPeriod }) {
                 {formatDate(day.date, i18n.language as Language, 'dayShort')}
               </Text>
             </View>
-            {value && (
-              <Text
-                variant="bodyStrong"
-                color={day.deltaMinutes > 0 ? colors.overtime : colors.ink}
-              >
-                {value}
-              </Text>
-            )}
+            {value && <Text variant="bodyStrong">{value}</Text>}
           </Pressable>
         );
       })}

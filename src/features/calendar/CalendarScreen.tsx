@@ -24,7 +24,7 @@ const LEGEND: { tint: Tint; key: string }[] = [
   { tint: 'sky', key: 'calendar.less' },
   { tint: 'mint', key: 'entryKind.holiday' },
   { tint: 'butter', key: 'entryKind.vacation' },
-  { tint: 'pink', key: 'entryKind.sick' },
+  { tint: 'orange', key: 'entryKind.sick' },
 ];
 
 export function CalendarScreen() {

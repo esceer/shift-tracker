@@ -33,12 +33,7 @@ function toCell(day: DayInfo, t: TFunction): CalendarCell {
       : day.scheduledMinutes > 0
         ? colors.surfaceMuted
         : colors.surface,
-    valueColor:
-      day.deltaMinutes > 0
-        ? colors.overtime
-        : worked > 0 || absence
-          ? colors.ink
-          : colors.inkSubtle,
+    valueColor: worked > 0 || absence ? colors.ink : colors.inkSubtle,
   };
 }
 

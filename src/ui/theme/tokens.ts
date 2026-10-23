@@ -12,7 +12,7 @@ export const colors = {
   inkSubtle: '#8A879C',
   onInk: '#FFFFFF',
   divider: '#F0EEF6',
-  /** Overtime numbers (4.5:1 on white and lavender). */
+  /** Overtime chip on Home (white text on it). */
   overtime: '#C5221F',
   /** Inactive progress/step indicator. */
   track: '#D9D6E3',
@@ -27,7 +27,9 @@ export const tints = {
   butter: '#FFE7A8',
   pink: '#FFD6E8',
   /** Overtime days. */
-  red: '#FFCFC9',
+  red: '#FFB4AB',
+  /** Sick days. */
+  orange: '#FFCF9E',
 } as const;
 
 export type Tint = keyof typeof tints;

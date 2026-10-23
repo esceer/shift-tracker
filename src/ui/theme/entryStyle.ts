@@ -8,7 +8,7 @@ export const kindTint: Record<EntryKind, Tint> = {
   adjustment: 'lavender',
   actual: 'lavender',
   vacation: 'butter',
-  sick: 'pink',
+  sick: 'orange',
   holiday: 'mint',
 };
 
