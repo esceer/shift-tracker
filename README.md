@@ -1,4 +1,4 @@
-# Hetes
+# Tempo
 
 Android app (React Native / Expo) for tracking over- and under-time against a usual weekly work schedule, per month and quarter. English and Hungarian.
 
@@ -34,6 +34,8 @@ unset HETES_PW
 ```
 
 Back up `hetes-release.jks` together with the password from `~/.gradle/gradle.properties` (for example in a password manager).
+
+The key and its `HETES_RELEASE_*` properties keep the app's first name (Hetes). Leave them as they are: renaming them changes nothing in the app, and updates must keep being signed with this same key.
 
 The config plugin `plugins/withReleaseSigning.js` wires these into the generated `android/` project on every prebuild.
 

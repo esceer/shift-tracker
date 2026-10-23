@@ -81,7 +81,7 @@ export function buildBackup(db: Database, now: Date): Backup {
   };
 }
 
-/** Thrown when a file is not a valid Hetes backup. */
+/** Thrown when a file is not a valid Tempo backup. */
 export class InvalidBackupError extends Error {}
 
 /** Replaces all schedules, entries and settings with the backup's. All or nothing. */

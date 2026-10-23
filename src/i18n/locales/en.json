@@ -170,7 +170,7 @@
     "confirm": "Restore",
     "cancel": "Cancel",
     "restored": "Backup restored.",
-    "invalid": "This file is not a Hetes backup.",
+    "invalid": "This file is not a Tempo backup.",
     "failed": "Something went wrong. Please try again."
   }
 }

@@ -48,7 +48,7 @@ function buildDocument(period: Period, t: TFunction, language: Language): Report
 
   return {
     language,
-    appName: 'Hetes',
+    appName: 'Tempo',
     title: `${t('export.reportTitle')} · ${formatPeriod(period, t, language)}`,
     generatedOn: t('export.generated', { date: formatDate(toISODate(new Date()), language) }),
     summary: [
@@ -114,7 +114,7 @@ export async function exportReportPdf(
   // Give the file a readable name for e-mail attachments.
   const { start } = periodRange(period);
   const suffix = period.type === 'month' ? start.slice(0, 7) : `${period.year}-Q${period.quarter}`;
-  const target = new File(Paths.cache, `hetes-${suffix}.pdf`);
+  const target = new File(Paths.cache, `tempo-${suffix}.pdf`);
   target.create({ overwrite: true });
   await target.write(base64!, { encoding: 'base64' });
 
