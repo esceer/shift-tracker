@@ -5,15 +5,45 @@ import type { TFunction } from 'i18next';
 
 import { db } from '@/data/db';
 import { readReportExport } from '@/data/queries';
-import { periodRange, toISODate } from '@/domain/dates';
-import type { Period } from '@/domain/types';
+import { monthsInPeriod, periodRange, toISODate, toMonthWeeks } from '@/domain/dates';
+import type { DayInfo, Period } from '@/domain/types';
 import type { Language } from '@/i18n/language';
 import { capitalize, formatDate, formatDuration, formatPeriod } from '@/lib/format';
+import { dayTint, kindTint } from '@/ui/theme/entryStyle';
+import { colors, tints } from '@/ui/theme/tokens';
 
-import { buildReportHtml, type ReportDocument } from './reportHtml';
+import { buildReportHtml, type CalendarCell, type ReportDocument } from './reportHtml';
+
+const WEEKDAYS = [1, 2, 3, 4, 5, 6, 7] as const;
+
+/** A day as printed: hours worked, the absence, or "–" for a day off. */
+function toCell(day: DayInfo, t: TFunction): CalendarCell {
+  const tint = dayTint(day);
+  const absence = day.entry?.minutes === null ? day.entry.kind : undefined;
+  const worked = day.scheduledMinutes + day.deltaMinutes;
+  return {
+    day: String(Number(day.date.slice(8))),
+    value: absence
+      ? t(`entryKind.${absence}`)
+      : worked > 0
+        ? formatDuration(worked, t, { short: true })
+        : '–',
+    background: tint
+      ? tints[tint]
+      : day.scheduledMinutes > 0
+        ? colors.surfaceMuted
+        : colors.surface,
+    valueColor:
+      day.deltaMinutes > 0
+        ? colors.overtime
+        : worked > 0 || absence
+          ? colors.ink
+          : colors.inkSubtle,
+  };
+}
 
 function buildDocument(period: Period, t: TFunction, language: Language): ReportDocument {
-  const { report, months, changes } = readReportExport(db, period);
+  const { report, months, days, changes } = readReportExport(db, period);
   const duration = (minutes: number, signed = false) => formatDuration(minutes, t, { signed });
 
   return {
@@ -35,6 +65,25 @@ function buildDocument(period: Period, t: TFunction, language: Language): Report
       label: t(`entryKind.${kind}`),
       value: String(report.absenceDays[kind]),
     })),
+    calendarTitle: t('export.calendar'),
+    weekdays: WEEKDAYS.map((weekday) => t(`weekdaysShort.${weekday}`)),
+    calendars: monthsInPeriod(period).map((month) => {
+      const { start, end } = periodRange(month);
+      return {
+        title: capitalize(formatDate(start, language, 'monthYear')),
+        weeks: toMonthWeeks(days.filter((day) => day.date >= start && day.date <= end)).map(
+          (week) => week.map((day) => (day ? toCell(day, t) : null)),
+        ),
+      };
+    }),
+    legend: [
+      { label: t('calendar.extra'), color: tints.red },
+      { label: t('calendar.less'), color: tints.sky },
+      ...(['vacation', 'sick', 'holiday'] as const).map((kind) => ({
+        label: t(`entryKind.${kind}`),
+        color: tints[kindTint[kind]],
+      })),
+    ],
     changesTitle: t('reports.changes'),
     columns: {
       date: t('export.date'),

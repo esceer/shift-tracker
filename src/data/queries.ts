@@ -63,12 +63,13 @@ export function readDayForEditing(db: Database, date: ISODate) {
 /** Everything a printable report needs: totals, per-month totals for quarters, and the changes. */
 export function readReportExport(db: Database, period: Period) {
   const { start, end } = periodRange(period);
+  const days = readDays(db, start, end);
   return {
     report: readPeriodReport(db, period),
     months:
       period.type === 'quarter' ? monthsInPeriod(period).map((m) => readPeriodReport(db, m)) : [],
-    changes: readDays(db, start, end).filter(
-      (day) => day.entry && !(day.entry.synced && day.scheduledMinutes === 0),
-    ),
+    /** Every day of the period, for the calendar view. */
+    days,
+    changes: days.filter((day) => day.entry && !(day.entry.synced && day.scheduledMinutes === 0)),
   };
 }

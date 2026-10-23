@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useDays } from '@/data/live';
-import { periodRange, shiftPeriod, toISODate, weekdayOf } from '@/domain/dates';
+import { periodRange, shiftPeriod, toISODate, toMonthWeeks } from '@/domain/dates';
 import type { DayInfo, ISODate, Period } from '@/domain/types';
 import type { Language } from '@/i18n/language';
 import { capitalize, formatDate, formatDuration } from '@/lib/format';
@@ -26,16 +26,6 @@ const LEGEND: { tint: Tint; key: string }[] = [
   { tint: 'butter', key: 'entryKind.vacation' },
   { tint: 'pink', key: 'entryKind.sick' },
 ];
-
-/** Splits the month into Monday-first weeks; `null` pads the first and last week. */
-function toWeeks(days: DayInfo[]): (DayInfo | null)[][] {
-  const cells: (DayInfo | null)[] = [
-    ...Array<null>(weekdayOf(days[0]!.date) - 1).fill(null),
-    ...days,
-  ];
-  while (cells.length % 7) cells.push(null);
-  return Array.from({ length: cells.length / 7 }, (_, i) => cells.slice(i * 7, i * 7 + 7));
-}
 
 export function CalendarScreen() {
   const { t, i18n } = useTranslation();
@@ -101,7 +91,7 @@ export function CalendarScreen() {
             </Text>
           ))}
         </View>
-        {toWeeks(days).map((week, i) => (
+        {toMonthWeeks(days).map((week, i) => (
           <View key={i} style={styles.week}>
             {week.map((day, j) =>
               day ? (

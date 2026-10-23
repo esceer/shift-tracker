@@ -6,6 +6,7 @@ import {
   periodRange,
   quarterOfMonth,
   shiftPeriod,
+  toMonthWeeks,
   weekStart,
   weekdayOf,
 } from './dates';
@@ -108,5 +109,16 @@ describe('shiftPeriod', () => {
       year: 2025,
       quarter: 4,
     });
+  });
+});
+
+describe('toMonthWeeks', () => {
+  it('pads October 2026 (starts on a Thursday) into Monday-first weeks', () => {
+    const weeks = toMonthWeeks(
+      datesInPeriod({ type: 'month', year: 2026, month: 10 }).map((date) => ({ date })),
+    );
+    expect(weeks).toHaveLength(5);
+    expect(weeks[0]!.slice(0, 4)).toEqual([null, null, null, { date: '2026-10-01' }]);
+    expect(weeks[4]!.slice(5)).toEqual([{ date: '2026-10-31' }, null]);
   });
 });

@@ -157,7 +157,8 @@
     "date": "Date",
     "type": "Type",
     "note": "Note",
-    "change": "Change"
+    "change": "Change",
+    "calendar": "Calendar"
   },
   "backup": {
     "title": "Backup",

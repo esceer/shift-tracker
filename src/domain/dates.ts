@@ -81,3 +81,11 @@ export function shiftPeriod(period: Period, delta: number): Period {
     quarter: ((index % 4) + 1) as 1 | 2 | 3 | 4,
   };
 }
+
+/** Splits one month's items into Monday-first weeks; `null` pads the first and last week. */
+export function toMonthWeeks<T extends { date: ISODate }>(items: readonly T[]): (T | null)[][] {
+  if (items.length === 0) return [];
+  const cells: (T | null)[] = [...Array<null>(weekdayOf(items[0]!.date) - 1).fill(null), ...items];
+  while (cells.length % 7) cells.push(null);
+  return Array.from({ length: cells.length / 7 }, (_, i) => cells.slice(i * 7, i * 7 + 7));
+}

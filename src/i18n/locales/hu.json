@@ -157,7 +157,8 @@
     "date": "Dátum",
     "type": "Típus",
     "note": "Megjegyzés",
-    "change": "Változás"
+    "change": "Változás",
+    "calendar": "Naptár"
   },
   "backup": {
     "title": "Biztonsági mentés",
