@@ -62,7 +62,13 @@ export function HomeScreen() {
         </Text>
         <View style={styles.footer}>
           <Text color={colors.inkMuted}>{ofPlanned(report.scheduledMinutes, t)}</Text>
-          <View style={[styles.badge, balance > 0 && styles.badgeOvertime]}>
+          <View
+            style={[
+              styles.badge,
+              balance > 0 && styles.badgeOvertime,
+              balance < 0 && styles.badgeShortfall,
+            ]}
+          >
             <Text variant="caption" color={colors.onInk}>
               {t(`home.${status}`)}
             </Text>
@@ -159,6 +165,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   badgeOvertime: { backgroundColor: colors.overtime },
+  badgeShortfall: { backgroundColor: colors.shortfall },
   row: { flexDirection: 'row', gap: 10 },
   smallTile: { flex: 1, gap: 14, minHeight: 150, justifyContent: 'space-between' },
   tileIcon: {

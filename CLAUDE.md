@@ -20,7 +20,7 @@ Primary user: non-technical, Samsung flagship phone → clean, modern, friendly 
 ## UI style: "Bento" (chosen)
 
 Pastel rounded tiles (radius 22–30) on an off-white background (`#F7F6FB`), dark ink text (`#1B1A2E`), floating bottom bar with a central "+" button.
-Fonts: Bricolage Grotesque (headings/numbers) + DM Sans (body). Colour per kind: overtime `#FFB4AB` (numbers stay ink; Home chip `#C5221F`), less `#D6E6FF`, holiday `#CDEFDC`, vacation `#FFE7A8`, sick `#FFCF9E`, balance tile `#E4DDFF`.
+Fonts: Bricolage Grotesque (headings/numbers) + DM Sans (body). Colour per kind: overtime `#FFB4AB` (numbers stay ink; Home chip `#CF5C56`), less `#D6E6FF` (Home chip `#4A78C8`), holiday `#CDEFDC`, vacation `#FFE7A8`, sick `#FFCF9E`, balance tile `#E4DDFF`.
 Light mode only (dark mode is out of scope for now). Design board: see `docs/ARCHITECTURE.md` §4.
 
 ## Stack
