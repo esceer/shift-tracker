@@ -57,10 +57,12 @@ export function HomeScreen() {
         <Text variant="bodyStrong" color={colors.inkMuted}>
           {t('home.thisMonth')}
         </Text>
-        <Text variant="hero" numberOfLines={1} adjustsFontSizeToFit>
+        <Text variant="hero" style={styles.center} numberOfLines={1} adjustsFontSizeToFit>
           {formatDuration(balance, t, { signed: true, short: true })}
         </Text>
-        <Text color={colors.inkMuted}>{ofPlanned(report.scheduledMinutes, t)}</Text>
+        <Text color={colors.inkMuted} style={styles.center}>
+          {ofPlanned(report.scheduledMinutes, t)}
+        </Text>
         <View style={[styles.badge, balance > 0 && styles.badgeOvertime]}>
           <Text variant="caption" color={colors.onInk}>
             {t(`home.${status}`)}
@@ -146,9 +148,9 @@ export function HomeScreen() {
 
 const styles = StyleSheet.create({
   header: { gap: 2, paddingHorizontal: 6, marginBottom: spacing.xs },
-  balanceTile: { padding: 22, gap: 10 },
+  balanceTile: { padding: 22, gap: 10, alignItems: 'center' },
+  center: { textAlign: 'center' },
   badge: {
-    alignSelf: 'flex-start',
     backgroundColor: colors.ink,
     borderRadius: radius.pill,
     paddingHorizontal: 12,

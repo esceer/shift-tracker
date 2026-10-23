@@ -14,7 +14,7 @@
       "package": "com.esceer.shifttracker",
       "versionCode": 2,
       "adaptiveIcon": {
-        "backgroundColor": "#E4DDFF",
+        "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

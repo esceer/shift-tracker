@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <rect width="1024" height="1024" fill="#E4DDFF"/>
+  <rect width="1024" height="1024" fill="#FFFFFF"/>
   <!-- Pace gauge: blue = behind, red = ahead of the planned hours; needle slightly ahead. -->
   <g transform="translate(512 512) scale(1.0) translate(-512 -512)">
     
