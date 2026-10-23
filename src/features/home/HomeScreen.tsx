@@ -60,13 +60,13 @@ export function HomeScreen() {
         <Text variant="hero" style={styles.center} numberOfLines={1} adjustsFontSizeToFit>
           {formatDuration(balance, t, { signed: true, short: true })}
         </Text>
-        <Text color={colors.inkMuted} style={styles.alignEnd}>
-          {ofPlanned(report.scheduledMinutes, t)}
-        </Text>
-        <View style={[styles.badge, styles.alignEnd, balance > 0 && styles.badgeOvertime]}>
-          <Text variant="caption" color={colors.onInk}>
-            {t(`home.${status}`)}
-          </Text>
+        <View style={styles.footer}>
+          <Text color={colors.inkMuted}>{ofPlanned(report.scheduledMinutes, t)}</Text>
+          <View style={[styles.badge, balance > 0 && styles.badgeOvertime]}>
+            <Text variant="caption" color={colors.onInk}>
+              {t(`home.${status}`)}
+            </Text>
+          </View>
         </View>
       </Tile>
 
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   balanceTile: { padding: 22, gap: 10, alignItems: 'center' },
   center: { textAlign: 'center' },
   alignStart: { alignSelf: 'flex-start' },
-  alignEnd: { alignSelf: 'flex-end', textAlign: 'right' },
+  footer: { alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', gap: 10 },
   badge: {
     backgroundColor: colors.ink,
     borderRadius: radius.pill,
