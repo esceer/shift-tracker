@@ -71,8 +71,7 @@
     "monthly": "Havi",
     "monthHint": "Állítsd be a hónap minden napját. Csak erre a hónapra írja felül a heti beosztást.",
     "perMonth": "Ebben a hónapban",
-    "useWeekly": "Heti beosztás erre a hónapra",
-    "reset": "Visszaállítás"
+    "useWeekly": "Heti beosztás erre a hónapra"
   },
   "settings": {
     "scheduleSummary": "{{total}} / hét · {{date}} óta",

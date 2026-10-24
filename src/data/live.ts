@@ -5,7 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   DayInfo,
   ISODate,
-  NationalCalendar,
   Period,
   PeriodReport,
   PlannedDays,
@@ -14,13 +13,7 @@ import type {
 
 import type { Database } from './database';
 import { db } from './db';
-import {
-  readDayForEditing,
-  readDays,
-  readNationalCalendar,
-  readPeriodReport,
-  readUpcoming,
-} from './queries';
+import { readDayForEditing, readDays, readPeriodReport, readUpcoming } from './queries';
 import { listPlannedDays } from './repositories/plannedDayRepository';
 import { listScheduleVersions } from './repositories/scheduleRepository';
 import { getSettings, type AppSettings } from './repositories/settingsRepository';
@@ -88,15 +81,6 @@ export function useDayForEditing(date: ISODate) {
 export function usePlannedDays(start: ISODate, end: ISODate): PlannedDays {
   const read = useCallback((db: Database) => listPlannedDays(db, { start, end }), [start, end]);
   return useLiveData([plannedDays], read);
-}
-
-/** Synced holidays and swapped days in an inclusive range (empty when sync is off). */
-export function useNationalCalendar(start: ISODate, end: ISODate): NationalCalendar {
-  const read = useCallback(
-    (db: Database) => readNationalCalendar(db, { start, end }),
-    [start, end],
-  );
-  return useLiveData([publicHolidays, workdaySwaps, settings], read);
 }
 
 export function useScheduleVersions(): ScheduleVersion[] {

@@ -71,8 +71,7 @@
     "monthly": "Monthly",
     "monthHint": "Set the hours for every day of the month. It replaces the weekly schedule for that month only.",
     "perMonth": "This month",
-    "useWeekly": "Use the weekly schedule for this month",
-    "reset": "Reset"
+    "useWeekly": "Use the weekly schedule for this month"
   },
   "settings": {
     "scheduleSummary": "{{total}} / week · since {{date}}",
