@@ -89,6 +89,7 @@ export function buildReportHtml(doc: ReportDocument): string {
   h1 { font-size: 22pt; margin: 2mm 0 6mm; }
   h2 { font-size: 13pt; margin: 8mm 0 3mm; }
   .tiles { display: flex; gap: 3mm; }
+  .tiles + .tiles { margin-top: 3mm; }
   .tile { flex: 1; background: #F0EEF6; border-radius: 4mm; padding: 3mm 4mm; }
   .tile.highlight:last-child { background: #E4DDFF; }
   .label { color: #4A4860; font-size: 9pt; }
