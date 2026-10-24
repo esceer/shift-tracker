@@ -59,7 +59,7 @@ export function Stepper({
     <Text
       variant={variant}
       color={valueColor}
-      style={styles.value}
+      style={[styles.value, styles.label]}
       numberOfLines={1}
       adjustsFontSizeToFit
       accessibilityLiveRegion="polite"
@@ -124,6 +124,8 @@ export function Stepper({
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   value: { flex: 1, textAlign: 'center' },
+  // The text box fills the button height; keep the glyphs in its middle (Android).
+  label: { textAlignVertical: 'center', includeFontPadding: false },
   input: {
     color: colors.ink,
     borderRadius: radius.sm,
