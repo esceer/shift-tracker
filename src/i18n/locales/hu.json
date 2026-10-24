@@ -66,7 +66,8 @@
     "monthly": "Havi",
     "monthHint": "Állítsd be a hónap minden napját. Csak erre a hónapra írja felül a heti munkarendet.",
     "perMonth": "Ebben a hónapban",
-    "useWeekly": "Heti munkarend erre a hónapra"
+    "useWeekly": "Heti munkarend erre a hónapra",
+    "reset": "Visszaállítás"
   },
   "settings": {
     "scheduleSummary": "{{total}} / hét · {{date}} óta",
@@ -93,7 +94,7 @@
     "previewAbsence": "A beosztott {{scheduled}} ledolgozottnak számít",
     "holidayHint": "Ünnepnap: {{name}}",
     "note": "Megjegyzés",
-    "notePlaceholder": "Tovább kellett maradni",
+    "notePlaceholder": "Elhúzódó vizsgálat",
     "save": "Mentés",
     "delete": "Változás törlése"
   },
@@ -103,7 +104,7 @@
     "ahead": "Túlóra",
     "behind": "Hiány",
     "onTrack": "Rendben",
-    "nextChange": "Következő változás · {{day}}",
+    "nextChange": "Következő változás",
     "noUpcoming": "Nincs tervezett változás",
     "nextHoliday": "Ünnep · {{day}}",
     "noHoliday": "Nincs közelgő ünnep",

@@ -5,6 +5,7 @@ import {
   formatDate,
   formatDuration,
   formatDurationCompact,
+  formatBalance,
   formatPeriod,
 } from './format';
 
@@ -75,5 +76,14 @@ describe('formatPeriod', () => {
     expect(
       formatPeriod({ type: 'quarter', year: 2026, quarter: 3 }, i18n.getFixedT('hu'), 'hu'),
     ).toBe('2026. júl. – szept.');
+  });
+});
+
+describe('formatBalance', () => {
+  it('abbreviates only when there are hours and minutes', () => {
+    const hu = i18n.getFixedT('hu');
+    expect(formatBalance(480, hu)).toBe('+8 óra');
+    expect(formatBalance(-45, hu)).toBe('−45 perc');
+    expect(formatBalance(-75, hu)).toBe('−1 ó 15 p');
   });
 });

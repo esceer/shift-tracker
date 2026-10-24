@@ -6,6 +6,7 @@ import {
 import {
   DMSans_400Regular,
   DMSans_500Medium,
+  DMSans_500Medium_Italic,
   DMSans_600SemiBold,
   DMSans_700Bold,
 } from '@expo-google-fonts/dm-sans';
@@ -17,6 +18,7 @@ export const fontAssets = {
   BricolageGrotesque_800ExtraBold,
   DMSans_400Regular,
   DMSans_500Medium,
+  DMSans_500Medium_Italic,
   DMSans_600SemiBold,
   DMSans_700Bold,
 };
@@ -28,6 +30,7 @@ export const fonts = {
   displayExtraBold: 'BricolageGrotesque_800ExtraBold',
   body: 'DMSans_400Regular',
   bodyMedium: 'DMSans_500Medium',
+  bodyItalic: 'DMSans_500Medium_Italic',
   bodySemiBold: 'DMSans_600SemiBold',
   bodyBold: 'DMSans_700Bold',
 } as const;

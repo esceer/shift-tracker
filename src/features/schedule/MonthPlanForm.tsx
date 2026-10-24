@@ -5,15 +5,17 @@ import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/data/db';
-import { useDays, usePlannedDays } from '@/data/live';
+import { useDays, usePlannedDays, useScheduleVersions } from '@/data/live';
 import { deleteMonthPlan, saveMonthPlan } from '@/data/repositories/plannedDayRepository';
 import { periodRange, shiftPeriod, toISODate, toMonthWeeks } from '@/domain/dates';
 import { STEP_MINUTES } from '@/domain/duration';
+import { scheduledMinutesOn } from '@/domain/schedule';
 import type { ISODate, Minutes, Period } from '@/domain/types';
 import type { Language } from '@/i18n/language';
 import { capitalize, formatDate, formatDuration } from '@/lib/format';
 import { Button } from '@/ui/components/Button';
 import { DayCell } from '@/ui/components/DayCell';
+import { Icon } from '@/ui/components/Icon';
 import { IconButton } from '@/ui/components/IconButton';
 import { Stepper } from '@/ui/components/Stepper';
 import { Text } from '@/ui/components/Text';
@@ -68,6 +70,7 @@ function MonthDays({ month }: { month: MonthPeriod }) {
   const { start, end } = periodRange(month);
   const days = useDays(start, end);
   const hasPlan = usePlannedDays(start, end).size > 0;
+  const versions = useScheduleVersions();
   // Starts from the month's plan, or from the weekly schedule when there is none.
   const [minutes, setMinutes] = useState<Map<ISODate, Minutes>>(
     () => new Map(days.map((day) => [day.date, day.scheduledMinutes])),
@@ -84,6 +87,10 @@ function MonthDays({ month }: { month: MonthPeriod }) {
     });
 
   const total = [...minutes.values()].reduce((sum, m) => sum + m, 0);
+
+  // Back to the weekly schedule's hours; stored only on save.
+  const reset = () =>
+    setMinutes(new Map(days.map((day) => [day.date, scheduledMinutesOn(versions, day.date)])));
 
   const save = () => {
     saveMonthPlan(
@@ -135,10 +142,21 @@ function MonthDays({ month }: { month: MonthPeriod }) {
       </Tile>
 
       <Tile tint="lavender" style={styles.summaryTile}>
-        <Text variant="label" color={colors.inkMuted}>
-          {t('schedule.perMonth')}
-        </Text>
-        <Text variant="title">{formatDuration(total, t)}</Text>
+        <View style={styles.flex}>
+          <Text variant="label" color={colors.inkMuted}>
+            {t('schedule.perMonth')}
+          </Text>
+          <Text variant="title">{formatDuration(total, t)}</Text>
+        </View>
+        <Pressable
+          onPress={reset}
+          accessibilityRole="button"
+          hitSlop={8}
+          style={({ pressed }) => [styles.resetButton, pressed && styles.pressed]}
+        >
+          <Icon name="sync" size={16} strokeWidth={2.2} />
+          <Text variant="label">{t('schedule.reset')}</Text>
+        </Pressable>
       </Tile>
 
       <Button label={t('schedule.save')} onPress={save} />
@@ -204,5 +222,21 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     gap: spacing.xl,
   },
-  summaryTile: { borderRadius: radius.md, gap: 2 },
+  summaryTile: {
+    borderRadius: radius.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  flex: { flex: 1, gap: 2 },
+  resetButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    height: 36,
+    paddingHorizontal: 14,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+  },
+  pressed: { opacity: 0.7 },
 });

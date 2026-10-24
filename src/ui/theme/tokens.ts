@@ -12,9 +12,6 @@ export const colors = {
   inkSubtle: '#8A879C',
   onInk: '#FFFFFF',
   divider: '#F0EEF6',
-  /** Text of the overtime / shortfall chips on Home. */
-  overtime: '#B23F38',
-  shortfall: '#2F5DA8',
   /** Inactive progress/step indicator. */
   track: '#D9D6E3',
 } as const;

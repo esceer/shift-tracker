@@ -13,7 +13,7 @@ import {
 } from '@/domain/dates';
 import type { AbsenceKind, Period } from '@/domain/types';
 import type { Language } from '@/i18n/language';
-import { capitalize, formatDate, formatDuration, formatPeriod } from '@/lib/format';
+import { capitalize, formatBalance, formatDate, formatDuration, formatPeriod } from '@/lib/format';
 import { Button } from '@/ui/components/Button';
 import { Icon } from '@/ui/components/Icon';
 import { IconButton } from '@/ui/components/IconButton';
@@ -98,7 +98,7 @@ export function ReportsScreen() {
           />
         </View>
         <Text variant="hero" style={styles.center} numberOfLines={1} adjustsFontSizeToFit>
-          {duration(report.balanceMinutes, true)}
+          {formatBalance(report.balanceMinutes, t)}
         </Text>
         <Text color={colors.inkMuted} style={styles.center}>
           {t('home.workedOf', {

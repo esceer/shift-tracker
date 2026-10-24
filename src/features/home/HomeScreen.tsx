@@ -8,14 +8,14 @@ import { addDays, weekStart, weekdayOf } from '@/domain/dates';
 import { splitDuration } from '@/domain/duration';
 import type { ISODate } from '@/domain/types';
 import type { Language } from '@/i18n/language';
-import { capitalize, formatDate, formatDuration } from '@/lib/format';
+import { capitalize, formatBalance, formatDate, formatDuration } from '@/lib/format';
 import { useToday } from '@/lib/useToday';
 import { DayCell } from '@/ui/components/DayCell';
 import { Icon } from '@/ui/components/Icon';
 import { Screen } from '@/ui/components/Screen';
 import { Text } from '@/ui/components/Text';
 import { Tile } from '@/ui/components/Tile';
-import { colors, radius, spacing } from '@/ui/theme/tokens';
+import { colors, spacing } from '@/ui/theme/tokens';
 
 /** "of the planned 136h" / "az előírt 136 órához képest" (the Hungarian suffix depends on the unit). */
 function ofPlanned(minutes: number, t: TFunction): string {
@@ -40,7 +40,6 @@ export function HomeScreen() {
 
   const balance = report.balanceMinutes;
   const status = balance > 0 ? 'ahead' : balance < 0 ? 'behind' : 'onTrack';
-  const statusColor = balance > 0 ? colors.overtime : balance < 0 ? colors.shortfall : colors.ink;
   const duration = (minutes: number, signed = false) => formatDuration(minutes, t, { signed });
 
   return (
@@ -60,16 +59,11 @@ export function HomeScreen() {
           {t('home.thisMonth')}
         </Text>
         <Text variant="hero" style={styles.center} numberOfLines={1} adjustsFontSizeToFit>
-          {formatDuration(balance, t, { signed: true, short: true })}
+          {formatBalance(balance, t)}
         </Text>
-        <View style={styles.footer}>
-          <Text color={colors.inkMuted}>{ofPlanned(report.scheduledMinutes, t)}</Text>
-          <View style={styles.badge}>
-            <Text variant="caption" color={statusColor}>
-              {t(`home.${status}`)}
-            </Text>
-          </View>
-        </View>
+        <Text color={colors.inkMuted} style={styles.alignEnd}>
+          {ofPlanned(report.scheduledMinutes, t)}
+        </Text>
       </Tile>
 
       <View style={styles.row}>
@@ -84,7 +78,9 @@ export function HomeScreen() {
           {nextChange?.entry ? (
             <View>
               <Text variant="label" color={colors.inkMuted}>
-                {t('home.nextChange', { day: formatDate(nextChange.date, language, 'dayShort') })}
+                {t('home.nextChange')}
+                {'\n'}
+                {formatDate(nextChange.date, language, 'dayShort')}
               </Text>
               <Text variant="title" numberOfLines={1} adjustsFontSizeToFit>
                 {nextChange.entry.minutes === null
@@ -153,13 +149,7 @@ const styles = StyleSheet.create({
   balanceTile: { padding: 22, gap: 10, alignItems: 'center' },
   center: { textAlign: 'center' },
   alignStart: { alignSelf: 'flex-start' },
-  footer: { alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', gap: 10 },
-  badge: {
-    backgroundColor: 'rgba(255,255,255,0.6)',
-    borderRadius: radius.pill,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
+  alignEnd: { alignSelf: 'flex-end', textAlign: 'right' },
   row: { flexDirection: 'row', gap: 10 },
   smallTile: { flex: 1, gap: 14, minHeight: 150, justifyContent: 'space-between' },
   tileIcon: {

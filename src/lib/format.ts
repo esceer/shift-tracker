@@ -32,6 +32,12 @@ export function formatDuration(
   return signPrefix(sign, signed) + body;
 }
 
+/** Signed balance for the big numbers: "8 óra", "45 perc", but "1 ó 15 p" when it has both. */
+export function formatBalance(minutes: Minutes, t: TFunction): string {
+  const { hours, minutes: m } = splitDuration(minutes);
+  return formatDuration(minutes, t, { signed: true, short: hours > 0 && m > 0 });
+}
+
 /** Short form for small cells: "8h", "+1:30", "−0:45". */
 export function formatDurationCompact(
   minutes: Minutes,

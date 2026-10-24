@@ -17,6 +17,7 @@ import { Screen } from '@/ui/components/Screen';
 import { Stepper } from '@/ui/components/Stepper';
 import { Text } from '@/ui/components/Text';
 import { Tile } from '@/ui/components/Tile';
+import { fonts } from '@/ui/theme/fonts';
 import { colors, radius, spacing, tints, typography } from '@/ui/theme/tokens';
 
 import { initialForm, stepForm, toEntry, workedMinutes } from './entryForm';
@@ -128,7 +129,8 @@ function EntryEditor({ date }: { date: ISODate }) {
           placeholder={t('entry.notePlaceholder')}
           placeholderTextColor={colors.inkSubtle}
           accessibilityLabelledBy="note-label"
-          style={styles.noteInput}
+          // Italic while empty, so the placeholder reads as an example.
+          style={[styles.noteInput, !form.note && styles.placeholder]}
         />
       </Tile>
 
@@ -161,4 +163,5 @@ const styles = StyleSheet.create({
   preview: { textAlign: 'center' },
   noteTile: { borderRadius: radius.md, paddingVertical: 12, gap: 2 },
   noteInput: { ...typography.body, color: colors.ink, paddingVertical: 4 },
+  placeholder: { fontFamily: fonts.bodyItalic },
 });
