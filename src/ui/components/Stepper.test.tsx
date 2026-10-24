@@ -22,4 +22,49 @@ describe('Stepper', () => {
     expect(onDecrement).toHaveBeenCalledTimes(1);
     expect(onIncrement).toHaveBeenCalledTimes(1);
   });
+
+  it('lets the user type the value', async () => {
+    const onChangeMinutes = jest.fn();
+    await render(
+      <Stepper
+        valueLabel="6h"
+        onDecrement={jest.fn()}
+        onIncrement={jest.fn()}
+        decrementLabel="less"
+        incrementLabel="more"
+        minutes={360}
+        onChangeMinutes={onChangeMinutes}
+        editLabel="Hours"
+      />,
+    );
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Hours: 6h' }));
+    const input = screen.getByLabelText('Hours');
+    expect(input).toHaveDisplayValue('6:00');
+    await fireEvent.changeText(input, '7,5');
+    await fireEvent(input, 'submitEditing');
+    expect(onChangeMinutes).toHaveBeenCalledWith(450);
+  });
+
+  it('ignores invalid text', async () => {
+    const onChangeMinutes = jest.fn();
+    await render(
+      <Stepper
+        valueLabel="6h"
+        onDecrement={jest.fn()}
+        onIncrement={jest.fn()}
+        decrementLabel="less"
+        incrementLabel="more"
+        minutes={360}
+        onChangeMinutes={onChangeMinutes}
+        editLabel="Hours"
+      />,
+    );
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Hours: 6h' }));
+    await fireEvent.changeText(screen.getByLabelText('Hours'), 'abc');
+    await fireEvent(screen.getByLabelText('Hours'), 'blur');
+    expect(onChangeMinutes).not.toHaveBeenCalled();
+    expect(screen.getByText('6h')).toBeOnTheScreen();
+  });
 });

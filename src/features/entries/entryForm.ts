@@ -33,6 +33,11 @@ export function stepForm(form: EntryForm, steps: number): EntryForm {
   return { ...form, workedMinutes: clamp(form.workedMinutes + steps * STEP_MINUTES) };
 }
 
+/** Typed hours worked, kept between 0 and 24 hours. */
+export function setWorkedMinutes(form: EntryForm, minutes: Minutes): EntryForm {
+  return { ...form, workedMinutes: clamp(minutes) };
+}
+
 /** Time counted as worked that day if saved (absences count as the planned hours). */
 export function workedMinutes(form: EntryForm, scheduled: Minutes): Minutes {
   return form.kind === 'actual' ? form.workedMinutes : scheduled;

@@ -20,7 +20,7 @@ import { Tile } from '@/ui/components/Tile';
 import { fonts } from '@/ui/theme/fonts';
 import { colors, radius, spacing, tints, typography } from '@/ui/theme/tokens';
 
-import { initialForm, stepForm, toEntry, workedMinutes } from './entryForm';
+import { initialForm, setWorkedMinutes, stepForm, toEntry, workedMinutes } from './entryForm';
 import { KindPicker } from './KindPicker';
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -101,6 +101,9 @@ function EntryEditor({ date }: { date: ISODate }) {
             valueLabel={duration(form.workedMinutes)}
             onDecrement={() => setForm(stepForm(form, -1))}
             onIncrement={() => setForm(stepForm(form, 1))}
+            minutes={form.workedMinutes}
+            onChangeMinutes={(minutes) => setForm(setWorkedMinutes(form, minutes))}
+            editLabel={t('entry.typeHours')}
             decrementLabel={t('entry.decrease')}
             incrementLabel={t('entry.increase')}
             variant="title"

@@ -21,3 +21,20 @@ export function splitDuration(minutes: Minutes): {
     minutes: abs % 60,
   };
 }
+
+/** Parses typed hours ("7:30", "7,5", "7.5", "7") into minutes, rounded to 15; `null` if invalid. */
+export function parseDuration(text: string): Minutes | null {
+  const trimmed = text.trim();
+  const clock = /^(\d{1,2})(?::(\d{1,2}))?$/.exec(trimmed);
+  if (clock) {
+    const minutes = Number(clock[2] ?? 0);
+    return minutes < 60 ? snapToStep(Number(clock[1]) * 60 + minutes) : null;
+  }
+  const decimal = /^(\d{1,2})?[.,](\d+)$/.exec(trimmed);
+  return decimal ? snapToStep(Number(`${decimal[1] ?? 0}.${decimal[2]}`) * 60) : null;
+}
+
+/** "H:MM", the form `parseDuration` reads back. */
+export function toClock(minutes: Minutes): string {
+  return `${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, '0')}`;
+}

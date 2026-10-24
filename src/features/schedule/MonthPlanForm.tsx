@@ -86,6 +86,11 @@ function MonthDays({ month }: { month: MonthPeriod }) {
       return next;
     });
 
+  const set = (date: ISODate, value: Minutes) =>
+    setMinutes((current) =>
+      new Map(current).set(date, Math.min(MAX_DAY_MINUTES, Math.max(0, value))),
+    );
+
   const total = [...minutes.values()].reduce((sum, m) => sum + m, 0);
 
   // Back to the weekly schedule's hours; stored only on save.
@@ -189,6 +194,9 @@ function MonthDays({ month }: { month: MonthPeriod }) {
               valueColor={minutes.get(editing) ? colors.ink : colors.inkSubtle}
               onDecrement={() => change(editing, -1)}
               onIncrement={() => change(editing, 1)}
+              minutes={minutes.get(editing) ?? 0}
+              onChangeMinutes={(value) => set(editing, value)}
+              editLabel={t('entry.typeHours')}
               decrementLabel={t('entry.decrease')}
               incrementLabel={t('entry.increase')}
               variant="title"

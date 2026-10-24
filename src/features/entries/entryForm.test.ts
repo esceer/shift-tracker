@@ -1,4 +1,4 @@
-import { initialForm, stepForm, toEntry, workedMinutes } from './entryForm';
+import { initialForm, setWorkedMinutes, stepForm, toEntry, workedMinutes } from './entryForm';
 
 const date = '2026-10-28';
 
@@ -30,6 +30,12 @@ describe('entryForm', () => {
     expect(form.workedMinutes).toBe(0);
     form = stepForm(form, 200);
     expect(form.workedMinutes).toBe(1440);
+  });
+
+  it('keeps typed hours between 0 and 24 hours', () => {
+    const form = initialForm(undefined, 480);
+    expect(setWorkedMinutes(form, 450).workedMinutes).toBe(450);
+    expect(setWorkedMinutes(form, 1500).workedMinutes).toBe(1440);
   });
 
   it('counts absences as the planned hours', () => {

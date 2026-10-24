@@ -36,9 +36,15 @@ export function useScheduleEditor(mode: 'onboarding' | 'edit') {
       [weekday]: Math.min(MAX_DAY_MINUTES, Math.max(0, current[weekday] + steps * STEP_MINUTES)),
     }));
 
+  const setDay = (weekday: Weekday, value: number) =>
+    setMinutes((current) => ({
+      ...current,
+      [weekday]: Math.min(MAX_DAY_MINUTES, Math.max(0, value)),
+    }));
+
   const weeklyTotal = Object.values(minutes).reduce((sum, m) => sum + m, 0);
 
   const save = () => saveScheduleFrom(db, effectiveFrom, minutes, randomUUID);
 
-  return { minutes, changeDay, weeklyTotal, effectiveFrom, setEffectiveFrom, save };
+  return { minutes, changeDay, setDay, weeklyTotal, effectiveFrom, setEffectiveFrom, save };
 }

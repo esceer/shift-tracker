@@ -113,6 +113,9 @@ function WeeklyScheduleForm({ mode }: Props) {
                   valueColor={value ? colors.ink : colors.inkSubtle}
                   onDecrement={() => editor.changeDay(weekday, -1)}
                   onIncrement={() => editor.changeDay(weekday, 1)}
+                  minutes={value}
+                  onChangeMinutes={(minutes) => editor.setDay(weekday, minutes)}
+                  editLabel={t('schedule.typeHours', { day })}
                   decrementLabel={t('schedule.less', { day })}
                   incrementLabel={t('schedule.more', { day })}
                   buttonSize={40}
