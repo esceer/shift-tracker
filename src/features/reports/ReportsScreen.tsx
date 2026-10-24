@@ -176,9 +176,7 @@ function MonthTile({ month, onPress }: { month: MonthPeriod; onPress: () => void
 function MonthChanges({ month }: { month: MonthPeriod }) {
   const { t, i18n } = useTranslation();
   const { start, end } = periodRange(month);
-  const days = useDays(start, end).filter(
-    (day) => day.entry && !(day.entry.synced && day.scheduledMinutes === 0),
-  );
+  const days = useDays(start, end).filter((day) => day.entry && !day.entry.synced);
 
   return (
     <Tile style={styles.changes}>

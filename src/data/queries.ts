@@ -70,6 +70,6 @@ export function readReportExport(db: Database, period: Period) {
       period.type === 'quarter' ? monthsInPeriod(period).map((m) => readPeriodReport(db, m)) : [],
     /** Every day of the period, for the calendar view. */
     days,
-    changes: days.filter((day) => day.entry && !(day.entry.synced && day.scheduledMinutes === 0)),
+    changes: days.filter((day) => day.entry && !day.entry.synced),
   };
 }

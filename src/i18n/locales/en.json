@@ -7,7 +7,8 @@
     "addChange": "Add change"
   },
   "common": {
-    "back": "Back"
+    "back": "Back",
+    "done": "Done"
   },
   "duration": {
     "hours": "{{h}}h",
@@ -65,8 +66,7 @@
     "monthly": "Monthly",
     "monthHint": "Set the hours for every day of the month. It replaces the weekly schedule for that month only.",
     "perMonth": "This month",
-    "useWeekly": "Use the weekly schedule for this month",
-    "dayLabel": "{{weekday}} {{day}}"
+    "useWeekly": "Use the weekly schedule for this month"
   },
   "settings": {
     "scheduleSummary": "{{total}} / week · since {{date}}",
@@ -84,8 +84,7 @@
     "off": "off"
   },
   "entry": {
-    "titleNew": "Add change",
-    "titleEdit": "Edit change",
+    "title": "Edit",
     "previousDay": "Previous day",
     "nextDay": "Next day",
     "decrease": "15 minutes less",
@@ -94,13 +93,13 @@
     "previewAbsence": "Scheduled {{scheduled}} counts as worked",
     "holidayHint": "Public holiday: {{name}}",
     "note": "Note",
-    "notePlaceholder": "e.g. I was asked to stay longer",
+    "notePlaceholder": "Had to stay longer",
     "save": "Save change",
     "delete": "Delete change"
   },
   "home": {
     "thisMonth": "This month",
-    "workedOf": "{{worked}} worked of {{scheduled}}",
+    "workedOf": "{{worked}} / {{scheduled}} planned",
     "ahead": "Ahead",
     "behind": "Behind",
     "onTrack": "On track",
@@ -121,7 +120,6 @@
     "noChange": "No change",
     "scheduled": "Scheduled {{scheduled}}",
     "dayOff": "Day off",
-    "add": "Add",
     "edit": "Edit",
     "plannedWorked": "Planned {{scheduled}} · worked {{worked}}",
     "today": "Today"
@@ -131,7 +129,7 @@
     "quarter": "Quarter",
     "previous": "Previous period",
     "next": "Next period",
-    "quarterTitle": "Q{{quarter}} · {{from}} – {{to}} {{year}}",
+    "quarterTitle": "{{from}} – {{to}} {{year}}",
     "daysOff": "Days off",
     "changes": "Changes",
     "noChanges": "No changes in this month"

@@ -71,9 +71,9 @@ describe('formatPeriod', () => {
     );
     expect(
       formatPeriod({ type: 'quarter', year: 2026, quarter: 3 }, i18n.getFixedT('en'), 'en'),
-    ).toBe('Q3 · Jul – Sep 2026');
+    ).toBe('Jul – Sep 2026');
     expect(
       formatPeriod({ type: 'quarter', year: 2026, quarter: 3 }, i18n.getFixedT('hu'), 'hu'),
-    ).toBe('2026. 3. negyedév · júl. – szept.');
+    ).toBe('2026. júl. – szept.');
   });
 });

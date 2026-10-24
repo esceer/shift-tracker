@@ -71,13 +71,12 @@ export function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-/** "October 2026" / "2026. október", or "Q3 · Jul – Sep 2026" / "2026. 3. negyedév · júl. – szept.". */
+/** "October 2026" / "2026. október", or "Jul – Sep 2026" / "2026. júl. – szept.". */
 export function formatPeriod(period: Period, t: TFunction, language: Language): string {
   const start = (p: Period) => periodRange(p).start;
   if (period.type === 'month') return capitalize(formatDate(start(period), language, 'monthYear'));
   const months = monthsInPeriod(period);
   return t('reports.quarterTitle', {
-    quarter: period.quarter,
     year: period.year,
     from: formatDate(start(months[0]!), language, 'monthShort'),
     to: formatDate(start(months[2]!), language, 'monthShort'),

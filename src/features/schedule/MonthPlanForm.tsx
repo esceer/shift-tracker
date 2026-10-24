@@ -1,17 +1,19 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/data/db';
 import { useDays, usePlannedDays } from '@/data/live';
 import { deleteMonthPlan, saveMonthPlan } from '@/data/repositories/plannedDayRepository';
-import { periodRange, shiftPeriod, toISODate, weekdayOf } from '@/domain/dates';
+import { periodRange, shiftPeriod, toISODate, toMonthWeeks } from '@/domain/dates';
 import { STEP_MINUTES } from '@/domain/duration';
 import type { ISODate, Minutes, Period } from '@/domain/types';
 import type { Language } from '@/i18n/language';
 import { capitalize, formatDate, formatDuration } from '@/lib/format';
 import { Button } from '@/ui/components/Button';
+import { DayCell } from '@/ui/components/DayCell';
 import { IconButton } from '@/ui/components/IconButton';
 import { Stepper } from '@/ui/components/Stepper';
 import { Text } from '@/ui/components/Text';
@@ -58,8 +60,11 @@ export function MonthPlanForm() {
   );
 }
 
+const WEEKDAYS = [1, 2, 3, 4, 5, 6, 7] as const;
+
 function MonthDays({ month }: { month: MonthPeriod }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = i18n.language as Language;
   const { start, end } = periodRange(month);
   const days = useDays(start, end);
   const hasPlan = usePlannedDays(start, end).size > 0;
@@ -67,6 +72,8 @@ function MonthDays({ month }: { month: MonthPeriod }) {
   const [minutes, setMinutes] = useState<Map<ISODate, Minutes>>(
     () => new Map(days.map((day) => [day.date, day.scheduledMinutes])),
   );
+  const [editing, setEditing] = useState<ISODate>();
+  const insets = useSafeAreaInsets();
 
   const change = (date: ISODate, steps: number) =>
     setMinutes((current) => {
@@ -95,31 +102,36 @@ function MonthDays({ month }: { month: MonthPeriod }) {
 
   return (
     <>
-      <Tile style={styles.days}>
-        {[...minutes].map(([date, value]) => {
-          const label = t('schedule.dayLabel', {
-            day: Number(date.slice(8)),
-            weekday: t(`weekdaysShort.${weekdayOf(date)}`),
-          });
-          return (
-            <View key={date} style={styles.dayRow}>
-              <Text variant="bodyStrong" style={styles.dayName}>
-                {label}
-              </Text>
-              <View style={styles.stepper}>
-                <Stepper
-                  valueLabel={value ? formatDuration(value, t) : t('schedule.off')}
-                  valueColor={value ? colors.ink : colors.inkSubtle}
-                  onDecrement={() => change(date, -1)}
-                  onIncrement={() => change(date, 1)}
-                  decrementLabel={t('schedule.less', { day: label })}
-                  incrementLabel={t('schedule.more', { day: label })}
-                  buttonSize={40}
+      <Tile style={styles.grid}>
+        <View style={styles.week}>
+          {WEEKDAYS.map((weekday) => (
+            <Text key={weekday} variant="caption" color={colors.inkMuted} style={styles.weekday}>
+              {t(`weekdaysShort.${weekday}`)}
+            </Text>
+          ))}
+        </View>
+        {toMonthWeeks([...minutes].map(([date, value]) => ({ date, value }))).map((week, i) => (
+          <View key={i} style={styles.week}>
+            {week.map((cell, j) =>
+              cell ? (
+                <DayCell
+                  key={cell.date}
+                  day={{
+                    date: cell.date,
+                    scheduledMinutes: cell.value,
+                    entry: undefined,
+                    deltaMinutes: 0,
+                  }}
+                  label={String(Number(cell.date.slice(8)))}
+                  selected={cell.date === editing}
+                  onPress={() => setEditing(cell.date)}
                 />
-              </View>
-            </View>
-          );
-        })}
+              ) : (
+                <View key={`empty-${j}`} style={styles.empty} />
+              ),
+            )}
+          </View>
+        ))}
       </Tile>
 
       <Tile tint="lavender" style={styles.summaryTile}>
@@ -133,6 +145,41 @@ function MonthDays({ month }: { month: MonthPeriod }) {
       {hasPlan && (
         <Button label={t('schedule.useWeekly')} onPress={switchToWeekly} variant="secondary" />
       )}
+
+      <Modal
+        visible={editing !== undefined}
+        transparent
+        statusBarTranslucent
+        navigationBarTranslucent
+        animationType="slide"
+        onRequestClose={() => setEditing(undefined)}
+      >
+        <Pressable
+          style={styles.backdrop}
+          onPress={() => setEditing(undefined)}
+          accessibilityLabel={t('common.done')}
+        />
+        {editing && (
+          <View style={[styles.sheet, { paddingBottom: spacing.xxl + insets.bottom }]}>
+            <Text variant="heading" accessibilityRole="header">
+              {capitalize(formatDate(editing, language, 'dayTitle'))}
+            </Text>
+            <Stepper
+              valueLabel={
+                minutes.get(editing) ? formatDuration(minutes.get(editing)!, t) : t('schedule.off')
+              }
+              valueColor={minutes.get(editing) ? colors.ink : colors.inkSubtle}
+              onDecrement={() => change(editing, -1)}
+              onIncrement={() => change(editing, 1)}
+              decrementLabel={t('entry.decrease')}
+              incrementLabel={t('entry.increase')}
+              variant="title"
+              buttonSize={56}
+            />
+            <Button label={t('common.done')} onPress={() => setEditing(undefined)} />
+          </View>
+        )}
+      </Modal>
     </>
   );
 }
@@ -145,9 +192,17 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   monthTitle: { flex: 1, textAlign: 'center' },
-  days: { paddingVertical: spacing.sm, gap: 0 },
-  dayRow: { height: 54, flexDirection: 'row', alignItems: 'center' },
-  dayName: { flex: 1 },
-  stepper: { width: 190 },
+  grid: { paddingHorizontal: 12, paddingVertical: 14, gap: 5 },
+  week: { flexDirection: 'row', gap: 5 },
+  weekday: { flex: 1, textAlign: 'center' },
+  empty: { flex: 1 },
+  backdrop: { flex: 1, backgroundColor: 'rgba(27,26,46,0.3)' },
+  sheet: {
+    backgroundColor: colors.background,
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
+    padding: spacing.xl,
+    gap: spacing.xl,
+  },
   summaryTile: { borderRadius: radius.md, gap: 2 },
 });

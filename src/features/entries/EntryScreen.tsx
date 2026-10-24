@@ -64,7 +64,7 @@ function EntryEditor({ date }: { date: ISODate }) {
           accessibilityLabel={t('common.back')}
           onPress={router.back}
         />
-        <Text variant="title">{entry ? t('entry.titleEdit') : t('entry.titleNew')}</Text>
+        <Text variant="title">{t('entry.title')}</Text>
       </View>
 
       <Tile style={styles.daySwitcher}>

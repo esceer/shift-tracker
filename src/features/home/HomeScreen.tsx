@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useDays, usePeriodReport, useUpcoming } from '@/data/live';
-import { addDays, toISODate, weekStart, weekdayOf } from '@/domain/dates';
+import { addDays, weekStart, weekdayOf } from '@/domain/dates';
 import { splitDuration } from '@/domain/duration';
 import type { ISODate } from '@/domain/types';
 import type { Language } from '@/i18n/language';
 import { capitalize, formatDate, formatDuration } from '@/lib/format';
+import { useToday } from '@/lib/useToday';
 import { DayCell } from '@/ui/components/DayCell';
 import { Icon } from '@/ui/components/Icon';
 import { Screen } from '@/ui/components/Screen';
@@ -16,7 +17,7 @@ import { Text } from '@/ui/components/Text';
 import { Tile } from '@/ui/components/Tile';
 import { colors, radius, spacing } from '@/ui/theme/tokens';
 
-/** "of the planned 136h" / "az előírt 136 órából" (the Hungarian suffix depends on the unit). */
+/** "of the planned 136h" / "az előírt 136 órához képest" (the Hungarian suffix depends on the unit). */
 function ofPlanned(minutes: number, t: TFunction): string {
   const { hours: h, minutes: m } = splitDuration(minutes);
   if (h && m) return t('home.ofPlannedHoursMinutes', { h, m });
@@ -29,7 +30,7 @@ const openEntry = (date: ISODate) => router.push({ pathname: '/entry/[date]', pa
 export function HomeScreen() {
   const { t, i18n } = useTranslation();
   const language = i18n.language as Language;
-  const today = toISODate(new Date());
+  const today = useToday();
   const [year, month] = today.split('-').map(Number) as [number, number];
 
   const report = usePeriodReport({ type: 'month', year, month });
@@ -39,6 +40,7 @@ export function HomeScreen() {
 
   const balance = report.balanceMinutes;
   const status = balance > 0 ? 'ahead' : balance < 0 ? 'behind' : 'onTrack';
+  const statusColor = balance > 0 ? colors.overtime : balance < 0 ? colors.shortfall : colors.ink;
   const duration = (minutes: number, signed = false) => formatDuration(minutes, t, { signed });
 
   return (
@@ -62,14 +64,8 @@ export function HomeScreen() {
         </Text>
         <View style={styles.footer}>
           <Text color={colors.inkMuted}>{ofPlanned(report.scheduledMinutes, t)}</Text>
-          <View
-            style={[
-              styles.badge,
-              balance > 0 && styles.badgeOvertime,
-              balance < 0 && styles.badgeShortfall,
-            ]}
-          >
-            <Text variant="caption" color={colors.onInk}>
+          <View style={styles.badge}>
+            <Text variant="caption" color={statusColor}>
               {t(`home.${status}`)}
             </Text>
           </View>
@@ -159,13 +155,11 @@ const styles = StyleSheet.create({
   alignStart: { alignSelf: 'flex-start' },
   footer: { alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', gap: 10 },
   badge: {
-    backgroundColor: colors.ink,
+    backgroundColor: 'rgba(255,255,255,0.6)',
     borderRadius: radius.pill,
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  badgeOvertime: { backgroundColor: colors.overtime },
-  badgeShortfall: { backgroundColor: colors.shortfall },
   row: { flexDirection: 'row', gap: 10 },
   smallTile: { flex: 1, gap: 14, minHeight: 150, justifyContent: 'space-between' },
   tileIcon: {

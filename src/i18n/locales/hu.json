@@ -7,7 +7,8 @@
     "addChange": "Változás hozzáadása"
   },
   "common": {
-    "back": "Vissza"
+    "back": "Vissza",
+    "done": "Kész"
   },
   "duration": {
     "hours": "{{h}} óra",
@@ -65,8 +66,7 @@
     "monthly": "Havi",
     "monthHint": "Állítsd be a hónap minden napját. Csak erre a hónapra írja felül a heti munkarendet.",
     "perMonth": "Ebben a hónapban",
-    "useWeekly": "Heti munkarend erre a hónapra",
-    "dayLabel": "{{day}}. {{weekday}}"
+    "useWeekly": "Heti munkarend erre a hónapra"
   },
   "settings": {
     "scheduleSummary": "{{total}} / hét · {{date}} óta",
@@ -84,8 +84,7 @@
     "off": "szabad"
   },
   "entry": {
-    "titleNew": "Változás hozzáadása",
-    "titleEdit": "Változás szerkesztése",
+    "title": "Szerkesztés",
     "previousDay": "Előző nap",
     "nextDay": "Következő nap",
     "decrease": "15 perccel kevesebb",
@@ -94,13 +93,13 @@
     "previewAbsence": "A beosztott {{scheduled}} ledolgozottnak számít",
     "holidayHint": "Ünnepnap: {{name}}",
     "note": "Megjegyzés",
-    "notePlaceholder": "pl. megkértek, hogy maradjak tovább",
+    "notePlaceholder": "Tovább kellett maradni",
     "save": "Mentés",
     "delete": "Változás törlése"
   },
   "home": {
     "thisMonth": "Ebben a hónapban",
-    "workedOf": "{{worked}} ledolgozva / {{scheduled}}",
+    "workedOf": "{{worked}} / {{scheduled}} előírt",
     "ahead": "Túlóra",
     "behind": "Hiány",
     "onTrack": "Rendben",
@@ -109,9 +108,9 @@
     "nextHoliday": "Ünnep · {{day}}",
     "noHoliday": "Nincs közelgő ünnep",
     "thisWeek": "Ezen a héten",
-    "ofPlannedHours": "az előírt {{h}} órából",
-    "ofPlannedHoursMinutes": "az előírt {{h}} óra {{m}} percből",
-    "ofPlannedMinutes": "az előírt {{m}} percből"
+    "ofPlannedHours": "az előírt {{h}} órához képest",
+    "ofPlannedHoursMinutes": "az előírt {{h}} óra {{m}} perchez képest",
+    "ofPlannedMinutes": "az előírt {{m}} perchez képest"
   },
   "calendar": {
     "previousMonth": "Előző hónap",
@@ -121,7 +120,6 @@
     "noChange": "Nincs változás",
     "scheduled": "Beosztás: {{scheduled}}",
     "dayOff": "Szabadnap",
-    "add": "Hozzáadás",
     "edit": "Szerkesztés",
     "plannedWorked": "Beosztás: {{scheduled}} · ledolgozva: {{worked}}",
     "today": "Ma"
@@ -131,7 +129,7 @@
     "quarter": "Negyedév",
     "previous": "Előző időszak",
     "next": "Következő időszak",
-    "quarterTitle": "{{year}}. {{quarter}}. negyedév · {{from}} – {{to}}",
+    "quarterTitle": "{{year}}. {{from}} – {{to}}",
     "daysOff": "Távollétek",
     "changes": "Változások",
     "noChanges": "Ebben a hónapban nincs változás"

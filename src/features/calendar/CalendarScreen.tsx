@@ -4,10 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useDays } from '@/data/live';
-import { periodRange, shiftPeriod, toISODate, toMonthWeeks } from '@/domain/dates';
+import { periodRange, shiftPeriod, toMonthWeeks } from '@/domain/dates';
 import type { DayInfo, ISODate, Period } from '@/domain/types';
 import type { Language } from '@/i18n/language';
 import { capitalize, formatDate, formatDuration } from '@/lib/format';
+import { useToday } from '@/lib/useToday';
 import { Button } from '@/ui/components/Button';
 import { DayCell } from '@/ui/components/DayCell';
 import { Icon } from '@/ui/components/Icon';
@@ -30,7 +31,7 @@ const LEGEND: { tint: Tint; key: string }[] = [
 export function CalendarScreen() {
   const { t, i18n } = useTranslation();
   const language = i18n.language as Language;
-  const today = toISODate(new Date());
+  const today = useToday();
   const [year, month] = today.split('-').map(Number) as [number, number];
 
   const [cursor, setCursor] = useState<Period>({ type: 'month', year, month });
@@ -151,7 +152,7 @@ function SelectedDay({ day, language }: { day: DayInfo; language: Language }) {
       </View>
       <View style={styles.selectedAction}>
         <Button
-          label={entry && !entry.synced ? t('calendar.edit') : t('calendar.add')}
+          label={t('calendar.edit')}
           onPress={() => router.push({ pathname: '/entry/[date]', params: { date: day.date } })}
         />
       </View>
