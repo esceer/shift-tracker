@@ -1,11 +1,10 @@
 import { buildPeriodReport, describeDays } from '@/domain/balance';
 import { datesBetween, monthsInPeriod, periodRange } from '@/domain/dates';
 import { mergeEntries } from '@/domain/holidays';
-import { emptyCalendar } from '@/domain/schedule';
 import type {
   DayInfo,
   ISODate,
-  NationalCalendar,
+  LegalRules,
   Period,
   PeriodReport,
   PublicHoliday,
@@ -27,13 +26,12 @@ function effectiveEntries(db: Database, range: { start: ISODate; end: ISODate })
   return mergeEntries(listEntries(db, range), listHolidays(db, range), holidaySyncEnabled);
 }
 
-/** Synced holidays and swapped days for an inclusive date range (empty when sync is off). */
-export function readNationalCalendar(
-  db: Database,
-  range: { start: ISODate; end: ISODate },
-): NationalCalendar {
-  if (!getSettings(db).holidaySyncEnabled) return emptyCalendar;
+/** The munkarend, plus synced holidays and swapped days in an inclusive date range while sync is on. */
+function readLegalRules(db: Database, range: { start: ISODate; end: ISODate }): LegalRules {
+  const { dailyMinutes, holidaySyncEnabled } = getSettings(db);
+  if (!holidaySyncEnabled) return { dailyMinutes, holidays: new Set(), swaps: new Map() };
   return {
+    dailyMinutes,
     holidays: new Set(listHolidays(db, range).map((holiday) => holiday.date)),
     swaps: new Map(listWorkdaySwaps(db, range).map((swap) => [swap.date, swap.kind])),
   };
@@ -45,7 +43,7 @@ export function readDays(db: Database, start: ISODate, end: ISODate): DayInfo[] 
     listScheduleVersions(db),
     effectiveEntries(db, { start, end }),
     listPlannedDays(db, { start, end }),
-    readNationalCalendar(db, { start, end }),
+    readLegalRules(db, { start, end }),
   );
 }
 
@@ -56,7 +54,7 @@ export function readPeriodReport(db: Database, period: Period): PeriodReport {
     listScheduleVersions(db),
     effectiveEntries(db, range),
     listPlannedDays(db, range),
-    readNationalCalendar(db, range),
+    readLegalRules(db, range),
   );
 }
 

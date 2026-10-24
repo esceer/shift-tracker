@@ -52,9 +52,8 @@
   "schedule": {
     "title": "A szokásos heted",
     "editTitle": "Beosztás",
+    "notLegal": "A szokásos munkaidőd, nem a törvényileg előírt. Azt a Beállításokban a Munkarend adja.",
     "subtitle": "Naponta általában hány órát dolgozol?",
-    "dailyHours": "Munkarend",
-    "requiredPerWeek": "Heti {{total}} törvényileg előírt",
     "editHint": "A változás a választott naptól érvényes. A korábbi napok a régi beosztást tartják.",
     "off": "Szabad",
     "less": "{{day}}: 1 órával kevesebb",
@@ -76,6 +75,8 @@
   "settings": {
     "scheduleSummary": "{{total}} / hét · {{date}} óta",
     "noSchedule": "Még nincs beállítva",
+    "dailyHours": "Munkarend",
+    "requiredPerWeek": "Heti {{total}} törvényileg előírt, a beosztásodtól függetlenül. Minden hónapra érvényes.",
     "monthPlanActive": "{{month}}: havi beosztás"
   },
   "entryKind": {

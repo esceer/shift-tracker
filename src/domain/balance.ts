@@ -4,8 +4,8 @@ import type {
   DayInfo,
   EffectiveEntry,
   ISODate,
+  LegalRules,
   Minutes,
-  NationalCalendar,
   Period,
   PeriodReport,
   PlannedDays,
@@ -40,12 +40,12 @@ export function describeDays(
   schedules: readonly ScheduleVersion[],
   entries: readonly EffectiveEntry[],
   plannedDays?: PlannedDays,
-  calendar?: NationalCalendar,
+  rules?: LegalRules,
 ): DayInfo[] {
   const entriesByDate = new Map(entries.map((entry) => [entry.date, entry]));
   return dates.map((date) => {
-    const scheduledMinutes = scheduledMinutesOn(schedules, date, plannedDays, calendar);
-    const requiredMinutes = requiredMinutesOn(schedules, date, calendar);
+    const scheduledMinutes = scheduledMinutesOn(schedules, date, plannedDays, rules);
+    const requiredMinutes = requiredMinutesOn(schedules, date, rules);
     const entry = entriesByDate.get(date);
     return {
       date,
@@ -63,7 +63,7 @@ export function buildPeriodReport(
   schedules: readonly ScheduleVersion[],
   entries: readonly EffectiveEntry[],
   plannedDays?: PlannedDays,
-  calendar?: NationalCalendar,
+  rules?: LegalRules,
 ): PeriodReport {
   const entriesByDate = new Map(entries.map((entry) => [entry.date, entry]));
   const report: PeriodReport = {
@@ -77,8 +77,8 @@ export function buildPeriodReport(
   };
 
   for (const date of datesInPeriod(period)) {
-    const scheduled = scheduledMinutesOn(schedules, date, plannedDays, calendar);
-    const required = requiredMinutesOn(schedules, date, calendar);
+    const scheduled = scheduledMinutesOn(schedules, date, plannedDays, rules);
+    const required = requiredMinutesOn(schedules, date, rules);
     const entry = entriesByDate.get(date);
 
     report.scheduledMinutes += scheduled;

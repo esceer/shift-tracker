@@ -1,7 +1,12 @@
 import { weekdayOf } from './dates';
-import type { ISODate, Minutes, NationalCalendar, PlannedDays, ScheduleVersion } from './types';
+import type { ISODate, LegalRules, Minutes, PlannedDays, ScheduleVersion } from './types';
 
-export const emptyCalendar: NationalCalendar = { holidays: new Set(), swaps: new Map() };
+/** Full-time munkarend (8h) without a national calendar. */
+export const defaultRules: LegalRules = {
+  dailyMinutes: 480,
+  holidays: new Set(),
+  swaps: new Map(),
+};
 
 /** The version active on `date`: the one with the latest `effectiveFrom` on or before it. */
 export function activeScheduleOn(
@@ -29,17 +34,17 @@ export function scheduledMinutesOn(
   versions: readonly ScheduleVersion[],
   date: ISODate,
   plannedDays: PlannedDays = new Map(),
-  calendar: NationalCalendar = emptyCalendar,
+  rules: LegalRules = defaultRules,
 ): Minutes {
   const planned = plannedDays.get(date);
   if (planned !== undefined) return planned;
   const version = activeScheduleOn(versions, date);
   if (!version) return 0;
-  switch (calendar.swaps.get(date)) {
+  switch (rules.swaps.get(date)) {
     case 'rest':
       return 0;
     case 'work':
-      return version.dailyMinutes;
+      return rules.dailyMinutes;
     default:
       return version.minutesByWeekday[weekdayOf(date)];
   }
@@ -47,16 +52,17 @@ export function scheduledMinutesOn(
 
 /**
  * Legally required minutes for `date` (törvényes munkaidő): the munkarend hours on Mon–Fri
- * and on swapped working Saturdays; 0 on weekends, public holidays and swapped rest days.
+ * and on swapped working Saturdays; 0 on weekends, public holidays and swapped rest days,
+ * and before the first schedule version (when tracking starts).
  */
 export function requiredMinutesOn(
   versions: readonly ScheduleVersion[],
   date: ISODate,
-  calendar: NationalCalendar = emptyCalendar,
+  rules: LegalRules = defaultRules,
 ): Minutes {
-  const daily = activeScheduleOn(versions, date)?.dailyMinutes ?? 0;
-  const swap = calendar.swaps.get(date);
-  if (swap) return swap === 'work' ? daily : 0;
-  if (calendar.holidays.has(date)) return 0;
-  return weekdayOf(date) <= 5 ? daily : 0;
+  if (!activeScheduleOn(versions, date)) return 0;
+  const swap = rules.swaps.get(date);
+  if (swap) return swap === 'work' ? rules.dailyMinutes : 0;
+  if (rules.holidays.has(date)) return 0;
+  return weekdayOf(date) <= 5 ? rules.dailyMinutes : 0;
 }

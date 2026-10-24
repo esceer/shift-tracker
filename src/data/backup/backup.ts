@@ -34,8 +34,6 @@ const backupSchema = z.object({
         6: dayMinutes,
         7: dayMinutes,
       }),
-      // Added later; older backups were made before the munkarend setting (8h).
-      dailyMinutes: dayMinutes.default(480),
     }),
   ),
   dayEntries: z.array(
@@ -64,6 +62,8 @@ const backupSchema = z.object({
   settings: z.object({
     language: z.enum(['en', 'hu']).nullable(),
     holidaySyncEnabled: z.boolean(),
+    // Added later; older backups were made before the munkarend setting (8h).
+    dailyMinutes: dayMinutes.default(480),
   }),
 });
 
@@ -71,7 +71,7 @@ export type Backup = z.infer<typeof backupSchema>;
 
 /** Everything the user entered. Cached public holidays are left out; they are re-synced. */
 export function buildBackup(db: Database, now: Date): Backup {
-  const { language, holidaySyncEnabled } = getSettings(db);
+  const { language, holidaySyncEnabled, dailyMinutes } = getSettings(db);
   return {
     app: 'shift-tracker',
     version: 1,
@@ -79,7 +79,7 @@ export function buildBackup(db: Database, now: Date): Backup {
     scheduleVersions: listScheduleVersions(db),
     dayEntries: listEntries(db),
     plannedDays: [...listPlannedDays(db)].map(([date, minutes]) => ({ date, minutes })),
-    settings: { language, holidaySyncEnabled },
+    settings: { language, holidaySyncEnabled, dailyMinutes },
   };
 }
 
@@ -111,5 +111,6 @@ export function restoreBackup(db: Database, json: unknown): void {
     }
     setSetting(tx, 'language', backup.settings.language);
     setSetting(tx, 'holidaySyncEnabled', backup.settings.holidaySyncEnabled);
+    setSetting(tx, 'dailyMinutes', backup.settings.dailyMinutes);
   });
 }

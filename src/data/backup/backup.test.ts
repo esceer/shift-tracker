@@ -20,6 +20,7 @@ async function seededDb(): Promise<Database> {
   saveMonthPlan(db, 2026, 11, [{ date: '2026-11-02', minutes: 300 }]);
   setSetting(db, 'language', 'hu');
   setSetting(db, 'holidaySyncEnabled', true);
+  setSetting(db, 'dailyMinutes', 360);
   return db;
 }
 
@@ -34,7 +35,11 @@ describe('backup', () => {
     expect(listScheduleVersions(target)).toEqual(listScheduleVersions(source));
     expect(listEntries(target)).toEqual(listEntries(source));
     expect(listPlannedDays(target)).toEqual(listPlannedDays(source));
-    expect(getSettings(target)).toMatchObject({ language: 'hu', holidaySyncEnabled: true });
+    expect(getSettings(target)).toMatchObject({
+      language: 'hu',
+      holidaySyncEnabled: true,
+      dailyMinutes: 360,
+    });
   });
 
   it('replaces existing data but keeps cached holidays', async () => {
@@ -70,12 +75,10 @@ describe('backup compatibility', () => {
 
   it('restores backups made before the munkarend setting as 8h', async () => {
     const target = await createTestDb();
+    setSetting(target, 'dailyMinutes', 240);
     const backup = buildBackup(await seededDb(), now);
-    const oldBackup = {
-      ...backup,
-      scheduleVersions: backup.scheduleVersions.map(({ dailyMinutes: _omitted, ...v }) => v),
-    };
-    restoreBackup(target, oldBackup);
-    expect(listScheduleVersions(target)[0]?.dailyMinutes).toBe(480);
+    const { dailyMinutes: _omitted, ...oldSettings } = backup.settings;
+    restoreBackup(target, { ...backup, settings: oldSettings });
+    expect(getSettings(target).dailyMinutes).toBe(480);
   });
 });

@@ -1,8 +1,8 @@
 import { buildPeriodReport, dayDelta, dayWorked, describeDays } from './balance';
 import { monthsInPeriod } from './dates';
 import { mergeEntries } from './holidays';
-import { octoberEntries, standardSchedule } from './testFixtures';
-import type { DayEntry, EffectiveEntry, NationalCalendar, Period, ScheduleVersion } from './types';
+import { octoberEntries, partTimeRules, standardSchedule } from './testFixtures';
+import type { DayEntry, EffectiveEntry, LegalRules, Period, ScheduleVersion } from './types';
 
 const october: Period = { type: 'month', year: 2026, month: 10 };
 const user = (entry: DayEntry): EffectiveEntry => ({ ...entry, synced: false });
@@ -46,7 +46,7 @@ describe('dayWorked', () => {
 
 describe('buildPeriodReport', () => {
   // October 2026 has 22 weekdays: 22 × 6h munkarend = 132h required; the plan is 126h.
-  const empty = buildPeriodReport(october, [standardSchedule], []);
+  const empty = buildPeriodReport(october, [standardSchedule], [], undefined, partTimeRules);
 
   it('compares the plan with the legally required hours', () => {
     expect(empty.scheduledMinutes).toBe(126 * 60);
@@ -56,7 +56,13 @@ describe('buildPeriodReport', () => {
   });
 
   it('adds the changes (+2h 45m in the October example)', () => {
-    const report = buildPeriodReport(october, [standardSchedule], octoberEntries.map(user));
+    const report = buildPeriodReport(
+      october,
+      [standardSchedule],
+      octoberEntries.map(user),
+      undefined,
+      partTimeRules,
+    );
     expect(report.workedMinutes).toBe(126 * 60 + 165);
     expect(report.balanceMinutes).toBe(-6 * 60 + 165);
     expect(report.entries).toHaveLength(5);
@@ -64,14 +70,21 @@ describe('buildPeriodReport', () => {
 
   it('includes future-dated entries', () => {
     const onlyFuture = octoberEntries.filter((e) => e.date === '2026-10-28').map(user);
-    expect(buildPeriodReport(october, [standardSchedule], onlyFuture).balanceMinutes).toBe(
-      empty.balanceMinutes - 120,
-    );
+    expect(
+      buildPeriodReport(october, [standardSchedule], onlyFuture, undefined, partTimeRules)
+        .balanceMinutes,
+    ).toBe(empty.balanceMinutes - 120);
   });
 
   it('ignores entries outside the period', () => {
     const november = user({ date: '2026-11-03', kind: 'adjustment', minutes: 60, note: null });
-    const report = buildPeriodReport(october, [standardSchedule], [november]);
+    const report = buildPeriodReport(
+      october,
+      [standardSchedule],
+      [november],
+      undefined,
+      partTimeRules,
+    );
     expect(report.balanceMinutes).toBe(empty.balanceMinutes);
     expect(report.entries).toEqual([]);
   });
@@ -81,16 +94,19 @@ describe('buildPeriodReport', () => {
       id: 'v1',
       effectiveFrom: '2026-01-01',
       minutesByWeekday: { 1: 540, 2: 540, 3: 540, 4: 540, 5: 240, 6: 0, 7: 0 },
-      dailyMinutes: 480,
     };
     const holidays = [{ date: '2026-10-23', name: 'Nemzeti ünnep' }];
-    const calendar: NationalCalendar = { holidays: new Set(['2026-10-23']), swaps: new Map() };
+    const rules: LegalRules = {
+      dailyMinutes: 480,
+      holidays: new Set(['2026-10-23']),
+      swaps: new Map(),
+    };
     const report = buildPeriodReport(
       october,
       [usual],
       mergeEntries([], holidays, true),
       undefined,
-      calendar,
+      rules,
     );
     // 21 working days × 8h; worked: 17 Mon–Thu × 9h + 4 Fridays × 4h (the holiday counts 0)
     expect(report.requiredMinutes).toBe(168 * 60);
@@ -100,15 +116,16 @@ describe('buildPeriodReport', () => {
 
   it('counts swapped days in the plan and the required hours', () => {
     const december: Period = { type: 'month', year: 2026, month: 12 };
-    const calendar: NationalCalendar = {
+    const rules: LegalRules = {
+      ...partTimeRules,
       holidays: new Set(['2026-12-25']),
       swaps: new Map([
         ['2026-12-12', 'work'],
         ['2026-12-24', 'rest'],
       ]),
     };
-    const plain = buildPeriodReport(december, [standardSchedule], []);
-    const report = buildPeriodReport(december, [standardSchedule], [], undefined, calendar);
+    const plain = buildPeriodReport(december, [standardSchedule], [], undefined, partTimeRules);
+    const report = buildPeriodReport(december, [standardSchedule], [], undefined, rules);
     // +6h on Sat 12th; −6h on Thu 24th and Fri 25th
     expect(report.requiredMinutes).toBe(plain.requiredMinutes - 6 * 60);
     // plan: +6h on Sat 12th, −8h on Thu 24th (Fri 25th stays planned; untouched holidays are merged in as entries)
@@ -120,18 +137,17 @@ describe('buildPeriodReport', () => {
       id: 'v2',
       effectiveFrom: '2026-10-15',
       minutesByWeekday: { 1: 480, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 },
-      dailyMinutes: 240,
     };
     const report = buildPeriodReport(october, [standardSchedule, mondaysOnly], []);
     // 1–14 Oct on v1: 56h; 15–31 Oct on v2: Mondays 19 and 26 → 16h
     expect(report.scheduledMinutes).toBe(72 * 60);
-    // 1–14 Oct: 10 weekdays × 6h; 15–31 Oct: 12 weekdays × 4h
-    expect(report.requiredMinutes).toBe(60 * 60 + 48 * 60);
   });
 
   it('handles leap-year February', () => {
     const feb2028: Period = { type: 'month', year: 2028, month: 2 };
-    expect(buildPeriodReport(feb2028, [standardSchedule], []).scheduledMinutes).toBe(118 * 60);
+    expect(
+      buildPeriodReport(feb2028, [standardSchedule], [], undefined, partTimeRules).scheduledMinutes,
+    ).toBe(118 * 60);
   });
 
   it('makes a quarter equal the sum of its months', () => {
@@ -143,10 +159,12 @@ describe('buildPeriodReport', () => {
       { date: '2026-09-03', kind: 'adjustment', minutes: 45, note: null },
     ].map((e) => user(e as DayEntry));
 
-    const quarter = buildPeriodReport(q3, [standardSchedule], entries);
-    const months = monthsInPeriod(q3).map((m) => buildPeriodReport(m, [standardSchedule], entries));
+    const quarter = buildPeriodReport(q3, [standardSchedule], entries, undefined, partTimeRules);
+    const months = monthsInPeriod(q3).map((m) =>
+      buildPeriodReport(m, [standardSchedule], entries, undefined, partTimeRules),
+    );
 
-    const empty = buildPeriodReport(q3, [standardSchedule], []);
+    const empty = buildPeriodReport(q3, [standardSchedule], [], undefined, partTimeRules);
     expect(quarter.scheduledMinutes).toBe(372 * 60);
     // the Wednesday vacation counts the 6h required instead of the 8h planned
     expect(quarter.balanceMinutes).toBe(empty.balanceMinutes + 210 - 105 + 45 - 120);
@@ -167,8 +185,14 @@ describe('buildPeriodReport', () => {
       ],
       true,
     );
-    const report = buildPeriodReport(october, [standardSchedule], entries);
-    const empty = buildPeriodReport(october, [standardSchedule], []);
+    const report = buildPeriodReport(
+      october,
+      [standardSchedule],
+      entries,
+      undefined,
+      partTimeRules,
+    );
+    const empty = buildPeriodReport(october, [standardSchedule], [], undefined, partTimeRules);
 
     expect(report.absenceDays).toEqual({ vacation: 1, sick: 1, holiday: 1 });
     // absences count the 6h required: Wed −2h vs the plan, the planned-off Monday +6h
@@ -194,6 +218,8 @@ describe('describeDays', () => {
       ['2026-10-14', '2026-10-15', '2026-10-22', '2026-10-23'],
       [standardSchedule],
       entries,
+      undefined,
+      partTimeRules,
     );
 
     expect(
@@ -213,8 +239,8 @@ describe('describeDays', () => {
   });
 
   it('takes the required hours from the national calendar', () => {
-    const calendar: NationalCalendar = { holidays: new Set(['2026-10-23']), swaps: new Map() };
-    const [day] = describeDays(['2026-10-23'], [standardSchedule], [], undefined, calendar);
+    const rules: LegalRules = { ...partTimeRules, holidays: new Set(['2026-10-23']) };
+    const [day] = describeDays(['2026-10-23'], [standardSchedule], [], undefined, rules);
     expect(day).toMatchObject({ scheduledMinutes: 360, requiredMinutes: 0 });
   });
 });
@@ -225,7 +251,7 @@ describe('buildPeriodReport with a monthly plan', () => {
       ['2026-10-19', 300], // Mon: 0 → 5h
       ['2026-10-20', 0], // Tue: 6h → 0
     ]);
-    const report = buildPeriodReport(october, [standardSchedule], [], plan);
+    const report = buildPeriodReport(october, [standardSchedule], [], plan, partTimeRules);
     expect(report.scheduledMinutes).toBe(126 * 60 + 300 - 360);
   });
 });

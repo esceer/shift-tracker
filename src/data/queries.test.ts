@@ -15,6 +15,7 @@ describe('queries', () => {
   beforeEach(async () => {
     db = await createTestDb();
     saveScheduleVersion(db, standardSchedule);
+    setSetting(db, 'dailyMinutes', 360);
     octoberEntries.forEach((entry) => saveEntry(db, entry));
     replaceHolidaysForYear(db, 2026, [
       { date: '2026-10-23', name: 'Nemzeti ünnep' },

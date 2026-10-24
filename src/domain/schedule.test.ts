@@ -1,16 +1,16 @@
 import { activeScheduleOn, requiredMinutesOn, scheduledMinutesOn } from './schedule';
-import { standardSchedule } from './testFixtures';
-import type { NationalCalendar, ScheduleVersion } from './types';
+import { partTimeRules, standardSchedule } from './testFixtures';
+import type { LegalRules, ScheduleVersion } from './types';
 
 const fromNovember: ScheduleVersion = {
   id: 'v2',
   effectiveFrom: '2026-11-01',
   minutesByWeekday: { 1: 480, 2: 480, 3: 480, 4: 480, 5: 480, 6: 0, 7: 0 },
-  dailyMinutes: 480,
 };
 
 /** 2026: Oct 23 holiday (Fri), Dec 12 working Saturday, Dec 24 rest day (Thu). */
-const calendar: NationalCalendar = {
+const calendar: LegalRules = {
+  ...partTimeRules,
   holidays: new Set(['2026-10-23']),
   swaps: new Map([
     ['2026-12-12', 'work'],
@@ -79,13 +79,14 @@ describe('scheduledMinutesOn on swapped days', () => {
 
 describe('requiredMinutesOn', () => {
   it('is the munkarend hours on Mon–Fri, whatever the plan', () => {
-    expect(requiredMinutesOn([standardSchedule], '2026-10-19')).toBe(360); // Mon, planned off
-    expect(requiredMinutesOn([standardSchedule], '2026-10-21')).toBe(360); // Wed, planned 8h
-    expect(requiredMinutesOn([standardSchedule], '2026-10-24')).toBe(0); // Sat
-    expect(requiredMinutesOn([standardSchedule], '2026-10-25')).toBe(0); // Sun
+    const s = [standardSchedule];
+    expect(requiredMinutesOn(s, '2026-10-19', partTimeRules)).toBe(360); // Mon, planned off
+    expect(requiredMinutesOn(s, '2026-10-21', partTimeRules)).toBe(360); // Wed, planned 8h
+    expect(requiredMinutesOn(s, '2026-10-24', partTimeRules)).toBe(0); // Sat
+    expect(requiredMinutesOn(s, '2026-10-25', partTimeRules)).toBe(0); // Sun
   });
 
-  it('follows the munkarend of the active version', () => {
+  it('defaults to the full-time 8h', () => {
     expect(requiredMinutesOn([standardSchedule, fromNovember], '2026-11-02')).toBe(480);
   });
 
@@ -95,7 +96,8 @@ describe('requiredMinutesOn', () => {
     expect(requiredMinutesOn([standardSchedule], '2026-12-12', calendar)).toBe(360);
   });
 
-  it('is 0 without any schedule', () => {
+  it('is 0 before tracking starts (no schedule yet)', () => {
     expect(requiredMinutesOn([], '2026-10-21')).toBe(0);
+    expect(requiredMinutesOn([standardSchedule], '2025-12-31')).toBe(0);
   });
 });

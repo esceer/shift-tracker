@@ -5,8 +5,9 @@ Primary user: non-technical, Samsung flagship phone → clean, modern, friendly 
 
 ## Product rules
 
-- **Schedule** ("Beosztás"): the usual weekly hours (minutes per weekday) plus the **munkarend** (legal daily hours: 8h / 6h / 4h), versioned together by `effectiveFrom` date. Editing never rewrites past periods.
-- **Required time** (törvényileg előírt): munkarend hours on Mon–Fri and on swapped working Saturdays; 0 on weekends, public holidays and swapped rest days.
+- **Schedule** ("Beosztás"): the usual weekly hours (whole hours per weekday), not the legal requirement. Versioned by `effectiveFrom` date (defaults to the 1st of the current month); saving from a date replaces later versions, earlier periods are never rewritten.
+- **Munkarend**: legal daily hours (8h / 6h / 4h), one setting in Settings with no history (a change applies to every month). Default 8h.
+- **Required time** (törvényileg előírt): munkarend hours on Mon–Fri and on swapped working Saturdays; 0 on weekends, public holidays, swapped rest days and before the first schedule version.
 - **Monthly plan** (optional, per month): planned minutes for every day of that month (`planned_days`); replaces the weekly schedule for that month only. Starts from the weekly values; can be removed.
 - **Day entry** (max one per date), entered as either:
   - `actual` (UI: "Módosítás"/"Adjust"): hours actually worked, editor starts at the planned hours (0–24h) → delta = actual − scheduled

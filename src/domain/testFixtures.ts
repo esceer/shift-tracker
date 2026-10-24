@@ -1,13 +1,19 @@
-import type { DayEntry, ScheduleVersion } from './types';
+import type { DayEntry, LegalRules, ScheduleVersion } from './types';
 
 const h = (hours: number) => hours * 60;
 
-/** Mon off, Tue 6h, Wed 8h, Thu 8h, Fri 6h, weekend off (28h/week); 6h munkarend (30h/week). */
+/** Mon off, Tue 6h, Wed 8h, Thu 8h, Fri 6h, weekend off (28h/week). */
 export const standardSchedule: ScheduleVersion = {
   id: 'v1',
   effectiveFrom: '2026-01-01',
   minutesByWeekday: { 1: 0, 2: h(6), 3: h(8), 4: h(8), 5: h(6), 6: 0, 7: 0 },
+};
+
+/** 6h munkarend (30h/week), no national calendar. */
+export const partTimeRules: LegalRules = {
   dailyMinutes: h(6),
+  holidays: new Set(),
+  swaps: new Map(),
 };
 
 /** October 2026 entries used in the design mockups; +2h 45m vs the plan. */

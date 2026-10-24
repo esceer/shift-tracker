@@ -11,8 +11,6 @@ export const scheduleVersions = sqliteTable('schedule_versions', {
   friMinutes: integer('fri_minutes').notNull(),
   satMinutes: integer('sat_minutes').notNull(),
   sunMinutes: integer('sun_minutes').notNull(),
-  /** Munkarend: legally required minutes per working day. */
-  dailyMinutes: integer('daily_minutes').notNull().default(480),
 });
 
 export const dayEntries = sqliteTable(

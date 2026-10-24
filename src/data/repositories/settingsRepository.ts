@@ -5,6 +5,8 @@ export interface AppSettings {
   /** `null` = follow the device language. */
   language: 'en' | 'hu' | null;
   holidaySyncEnabled: boolean;
+  /** Munkarend: legally required minutes per working day (480, 360 or 240). */
+  dailyMinutes: number;
   /** ISO timestamp of the last successful holiday sync. */
   holidaysSyncedAt: string | null;
 }
@@ -12,6 +14,7 @@ export interface AppSettings {
 export const defaultSettings: AppSettings = {
   language: null,
   holidaySyncEnabled: false,
+  dailyMinutes: 480,
   holidaysSyncedAt: null,
 };
 

@@ -18,8 +18,6 @@ export interface ScheduleVersion {
   effectiveFrom: ISODate;
   /** The usual hours per weekday (the plan). */
   minutesByWeekday: WeeklyMinutes;
-  /** Munkarend: legally required minutes per working day (480, 360 or 240). */
-  dailyMinutes: Minutes;
 }
 
 /** Áthelyezett munkanap: a Saturday that is a working day (`work`) or a weekday off (`rest`). */
@@ -30,8 +28,10 @@ export interface WorkdaySwap {
   kind: SwapKind;
 }
 
-/** Synced public holidays and swapped days that change the legal working days (empty when sync is off). */
-export interface NationalCalendar {
+/** What the legally required time depends on. Holidays and swaps are empty while sync is off. */
+export interface LegalRules {
+  /** Munkarend: required minutes per working day (480, 360 or 240). */
+  dailyMinutes: Minutes;
   holidays: ReadonlySet<ISODate>;
   swaps: ReadonlyMap<ISODate, SwapKind>;
 }

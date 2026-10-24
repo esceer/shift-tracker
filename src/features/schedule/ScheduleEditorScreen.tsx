@@ -21,8 +21,6 @@ import { MonthPlanForm } from './MonthPlanForm';
 import { useScheduleEditor } from './useScheduleEditor';
 
 const WEEKDAYS: Weekday[] = [1, 2, 3, 4, 5, 6, 7];
-/** Munkarend options: full time and the usual part-time days. */
-const DAILY_MINUTES = ['480', '360', '240'] as const;
 
 type Props = { mode: 'onboarding' | 'edit' };
 
@@ -54,6 +52,7 @@ export function ScheduleEditorScreen({ mode }: Props) {
 
       <View style={styles.intro}>
         <Text variant="title">{onboarding ? t('schedule.title') : t('schedule.editTitle')}</Text>
+        {!onboarding && <Text variant="bodyStrong">{t('schedule.notLegal')}</Text>}
         <Text color={colors.inkMuted}>
           {onboarding
             ? t('schedule.subtitle')
@@ -82,7 +81,7 @@ export function ScheduleEditorScreen({ mode }: Props) {
 /** Hours per weekday, valid from a chosen date. */
 function WeeklyScheduleForm({ mode }: Props) {
   const { t, i18n } = useTranslation();
-  const editor = useScheduleEditor(mode);
+  const editor = useScheduleEditor();
   const onboarding = mode === 'onboarding';
 
   const pickDate = () =>
@@ -100,24 +99,6 @@ function WeeklyScheduleForm({ mode }: Props) {
 
   return (
     <>
-      <Tile style={styles.dailyTile}>
-        <Text variant="label" color={colors.inkMuted}>
-          {t('schedule.dailyHours')}
-        </Text>
-        <SegmentedControl
-          options={DAILY_MINUTES.map((value) => ({
-            value,
-            label: formatDuration(Number(value), t),
-          }))}
-          value={String(editor.dailyMinutes) as (typeof DAILY_MINUTES)[number]}
-          onChange={(value) => editor.setDailyMinutes(Number(value))}
-          background={colors.surfaceMuted}
-        />
-        <Text variant="caption" color={colors.inkMuted}>
-          {t('schedule.requiredPerWeek', { total: formatDuration(editor.dailyMinutes * 5, t) })}
-        </Text>
-      </Tile>
-
       <Tile style={styles.days}>
         {WEEKDAYS.map((weekday) => {
           const day = t(`weekdays.${weekday}`);
@@ -179,7 +160,6 @@ const styles = StyleSheet.create({
   stepDone: { width: 20, backgroundColor: colors.track },
   stepCurrent: { width: 32, backgroundColor: colors.ink },
   intro: { gap: spacing.xs, paddingHorizontal: spacing.xs },
-  dailyTile: { borderRadius: radius.md, gap: spacing.sm },
   days: { paddingVertical: spacing.sm, gap: 0 },
   dayRow: { height: 54, flexDirection: 'row', alignItems: 'center' },
   dayName: { flex: 1 },

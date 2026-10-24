@@ -1,0 +1,1 @@
+ALTER TABLE `schedule_versions` DROP COLUMN `daily_minutes`;

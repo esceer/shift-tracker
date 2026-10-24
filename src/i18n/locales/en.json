@@ -52,9 +52,8 @@
   "schedule": {
     "title": "Your usual week",
     "editTitle": "Work schedule",
+    "notLegal": "Your usual hours, not the legally required time. That comes from “Legal daily hours” in Settings.",
     "subtitle": "How many hours do you normally work each day?",
-    "dailyHours": "Legal daily hours",
-    "requiredPerWeek": "{{total}} required by law per week",
     "editHint": "Changes count from the chosen date. Earlier days keep the old schedule.",
     "off": "Off",
     "less": "{{day}}: 1 hour less",
@@ -76,6 +75,8 @@
   "settings": {
     "scheduleSummary": "{{total}} / week · since {{date}}",
     "noSchedule": "Not set up yet",
+    "dailyHours": "Legal daily hours",
+    "requiredPerWeek": "{{total}} a week required by law, whatever your schedule. Applies to every month.",
     "monthPlanActive": "{{month}}: monthly plan"
   },
   "entryKind": {

@@ -11,7 +11,12 @@ interface ScheduleVersion {
   id: string;
   effectiveFrom: ISODate; // active until the next version's effectiveFrom
   minutesByWeekday: Record<Weekday, Minutes>; // the usual hours (the plan)
-  dailyMinutes: Minutes; // munkarend: legally required minutes per working day (480 | 360 | 240)
+}
+
+interface LegalRules {
+  dailyMinutes: Minutes; // munkarend setting: required minutes per working day (480 | 360 | 240)
+  holidays: Set<ISODate>; // empty while holiday sync is off
+  swaps: Map<ISODate, 'work' | 'rest'>; // empty while holiday sync is off
 }
 
 interface WorkdaySwap {
@@ -54,8 +59,8 @@ interface PeriodReport {
 For each date `d` in the period:
 
 - Active version: the schedule version with the greatest `effectiveFrom ≤ d` (none → plan and required are 0)
-- `scheduled(d)` (the plan): the monthly plan's minutes if `d` has one; else on a swapped rest day 0, on a swapped working day the version's `dailyMinutes`; else the version's minutes for that weekday
-- `required(d)` (törvényes munkaidő): swapped rest day → 0; swapped working day → `dailyMinutes`; public holiday → 0; Mon–Fri → `dailyMinutes`; weekend → 0. Holidays and swaps apply only while holiday sync is on.
+- `scheduled(d)` (the plan): the monthly plan's minutes if `d` has one; else on a swapped rest day 0, on a swapped working day `dailyMinutes`; else the version's minutes for that weekday
+- `required(d)` (törvényes munkaidő): before the first schedule version → 0; swapped rest day → 0; swapped working day → `dailyMinutes`; public holiday → 0; Mon–Fri → `dailyMinutes`; weekend → 0. Holidays and swaps apply only while holiday sync is on.
 - Effective entry for `d`: the user entry if there is one; otherwise, if holiday sync is on and `d` is a public holiday, a virtual `holiday` entry; otherwise none
 - `delta(d)` (shown per day; vs the plan):
   - no entry → 0
@@ -176,7 +181,7 @@ Chosen style: **Bento** (see CLAUDE.md for tokens). Mockups: https://claude.ai/a
 ## 6. Assumptions (confirm or correct)
 
 - Hungarian public holidays and swapped days come from the optional sync; holidays for other countries are out of scope (they can be entered by hand).
-- Munkarend is 8h, 6h or 4h on Mon–Fri (general work schedule); data from before the setting counts as 8h.
+- Munkarend is 8h, 6h or 4h on Mon–Fri (general work schedule), one setting without history; backups from before the setting restore as 8h.
 - Public holidays are not part of the JSON backup; they are re-synced after a restore.
 - Absences are whole-day only.
 - Before the first schedule version's `effectiveFrom`, the schedule is 0 h/day.

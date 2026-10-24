@@ -23,25 +23,34 @@ describe('saveScheduleFrom', () => {
   let db: Database;
   beforeEach(async () => {
     db = await createTestDb();
-    saveScheduleFrom(db, '2026-01-01', standardSchedule.minutesByWeekday, 360, newId);
+    saveScheduleFrom(db, '2026-01-01', standardSchedule.minutesByWeekday, newId);
   });
 
   it('adds a new version without changing earlier months', () => {
     const october = { type: 'month', year: 2026, month: 10 } as const;
     const before = scheduledIn(db, october);
 
-    saveScheduleFrom(db, '2026-11-01', fullTime, 480, newId);
+    saveScheduleFrom(db, '2026-11-01', fullTime, newId);
 
     expect(listScheduleVersions(db)).toHaveLength(2);
     expect(scheduledIn(db, october)).toBe(before);
     expect(scheduledIn(db, { type: 'month', year: 2026, month: 11 })).toBe(21 * 480);
   });
 
+  it('replaces versions that start later', () => {
+    saveScheduleFrom(db, '2026-10-24', fullTime, newId);
+    saveScheduleFrom(db, '2026-10-01', standardSchedule.minutesByWeekday, newId);
+
+    expect(listScheduleVersions(db).map((v) => v.effectiveFrom)).toEqual([
+      '2026-01-01',
+      '2026-10-01',
+    ]);
+  });
+
   it('updates the version that starts on the same date', () => {
-    saveScheduleFrom(db, '2026-01-01', fullTime, 480, newId);
+    saveScheduleFrom(db, '2026-01-01', fullTime, newId);
     const versions = listScheduleVersions(db);
     expect(versions).toHaveLength(1);
     expect(versions[0]?.minutesByWeekday).toEqual(fullTime);
-    expect(versions[0]?.dailyMinutes).toBe(480);
   });
 });

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { db } from '@/data/db';
-import { usePlannedDays, useScheduleVersions } from '@/data/live';
+import { usePlannedDays, useScheduleVersions, useSettings } from '@/data/live';
 import { setSetting } from '@/data/repositories/settingsRepository';
 import { periodRange, toISODate } from '@/domain/dates';
 import { activeScheduleOn } from '@/domain/schedule';
@@ -22,6 +22,8 @@ import { BackupTile } from './BackupTile';
 import { HolidaySyncTile } from './HolidaySyncTile';
 
 const WEEKDAYS: Weekday[] = [1, 2, 3, 4, 5, 6, 7];
+/** Munkarend options: full time and the usual part-time days. */
+const DAILY_MINUTES = ['480', '360', '240'] as const;
 const BAR_MAX_HEIGHT = 44;
 /** A day of this length (10h) fills the bar. */
 const BAR_FULL_MINUTES = 600;
@@ -34,6 +36,7 @@ export function SettingsScreen() {
   const [year, month] = today.split('-').map(Number) as [number, number];
   const thisMonth = periodRange({ type: 'month', year, month });
   const hasMonthPlan = usePlannedDays(thisMonth.start, thisMonth.end).size > 0;
+  const { dailyMinutes } = useSettings();
 
   const chooseLanguage = (value: Language) => {
     setSetting(db, 'language', value);
@@ -100,6 +103,22 @@ export function SettingsScreen() {
             })}
           </View>
         )}
+      </Tile>
+
+      <Tile>
+        <Text variant="heading">{t('settings.dailyHours')}</Text>
+        <SegmentedControl
+          options={DAILY_MINUTES.map((value) => ({
+            value,
+            label: formatDuration(Number(value), t),
+          }))}
+          value={String(dailyMinutes) as (typeof DAILY_MINUTES)[number]}
+          onChange={(value) => setSetting(db, 'dailyMinutes', Number(value))}
+          background={colors.surfaceMuted}
+        />
+        <Text variant="label" color={colors.inkMuted}>
+          {t('settings.requiredPerWeek', { total: formatDuration(dailyMinutes * 5, t) })}
+        </Text>
       </Tile>
 
       <HolidaySyncTile />
