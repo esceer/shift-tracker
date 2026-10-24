@@ -55,6 +55,22 @@ export function SettingsScreen() {
     <Screen withTabBar>
       <Text variant="display">{t('tabs.settings')}</Text>
 
+      <Tile>
+        <Text variant="heading">{t('settings.dailyHours')}</Text>
+        <SegmentedControl
+          options={DAILY_MINUTES.map((value) => ({
+            value,
+            label: formatDuration(Number(value), t),
+          }))}
+          value={String(dailyMinutes) as (typeof DAILY_MINUTES)[number]}
+          onChange={(value) => setSetting(db, 'dailyMinutes', Number(value))}
+          background={colors.surfaceMuted}
+        />
+        <Text variant="label" color={colors.inkMuted}>
+          {t('settings.requiredPerWeek', { total: formatDuration(dailyMinutes * 5, t) })}
+        </Text>
+      </Tile>
+
       <Tile
         tint="lavender"
         onPress={() => router.push('/schedule')}
@@ -103,22 +119,6 @@ export function SettingsScreen() {
             })}
           </View>
         )}
-      </Tile>
-
-      <Tile>
-        <Text variant="heading">{t('settings.dailyHours')}</Text>
-        <SegmentedControl
-          options={DAILY_MINUTES.map((value) => ({
-            value,
-            label: formatDuration(Number(value), t),
-          }))}
-          value={String(dailyMinutes) as (typeof DAILY_MINUTES)[number]}
-          onChange={(value) => setSetting(db, 'dailyMinutes', Number(value))}
-          background={colors.surfaceMuted}
-        />
-        <Text variant="label" color={colors.inkMuted}>
-          {t('settings.requiredPerWeek', { total: formatDuration(dailyMinutes * 5, t) })}
-        </Text>
       </Tile>
 
       <HolidaySyncTile />

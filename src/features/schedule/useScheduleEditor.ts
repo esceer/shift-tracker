@@ -9,7 +9,7 @@ import { roundToHour, stepWholeHours } from '@/domain/duration';
 import { activeScheduleOn } from '@/domain/schedule';
 import type { ISODate, Weekday, WeeklyMinutes } from '@/domain/types';
 
-import { saveScheduleFrom } from './saveSchedule';
+import { plannedMonthsFrom, saveScheduleFrom } from './saveSchedule';
 
 const MAX_DAY_MINUTES = 24 * 60;
 /** Starting point for a brand-new user: Mon–Fri 8h. */
@@ -42,7 +42,11 @@ export function useScheduleEditor() {
 
   const weeklyTotal = Object.values(minutes).reduce((sum, m) => sum + m, 0);
 
-  const save = () => saveScheduleFrom(db, effectiveFrom, minutes, randomUUID);
+  /** Saves and returns the months whose monthly plan still overrides the new week. */
+  const save = () => {
+    saveScheduleFrom(db, effectiveFrom, minutes, randomUUID);
+    return plannedMonthsFrom(db, effectiveFrom);
+  };
 
   return {
     minutes,

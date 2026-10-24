@@ -27,7 +27,7 @@ function effectiveEntries(db: Database, range: { start: ISODate; end: ISODate })
 }
 
 /** The munkarend, plus synced holidays and swapped days in an inclusive date range while sync is on. */
-function readLegalRules(db: Database, range: { start: ISODate; end: ISODate }): LegalRules {
+export function readLegalRules(db: Database, range: { start: ISODate; end: ISODate }): LegalRules {
   const { dailyMinutes, holidaySyncEnabled } = getSettings(db);
   if (!holidaySyncEnabled) return { dailyMinutes, holidays: new Set(), swaps: new Map() };
   return {

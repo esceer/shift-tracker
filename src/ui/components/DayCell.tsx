@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import type { DayInfo } from '@/domain/types';
 import type { Language } from '@/i18n/language';
@@ -7,7 +7,7 @@ import { formatDate, formatDurationCompact } from '@/lib/format';
 import { Icon } from '@/ui/components/Icon';
 import { Text } from '@/ui/components/Text';
 import { dayTint, kindIcon } from '@/ui/theme/entryStyle';
-import { colors, tints } from '@/ui/theme/tokens';
+import { colors, tints, type Tint } from '@/ui/theme/tokens';
 
 type Props = {
   day: DayInfo;
@@ -17,15 +17,27 @@ type Props = {
   today?: boolean;
   selected?: boolean;
   height?: number;
+  /** Background instead of the entry's colour. */
+  tint?: Tint;
+  /** Shows a small dot in the corner (e.g. a swapped day). */
+  marked?: boolean;
 };
 
 /**
  * One day in the week strip or month grid: scheduled hours, the change (+1:30 / −2h)
  * or an absence icon, coloured by kind.
  */
-export function DayCell({ day, label, onPress, today, selected, height = 54 }: Props) {
+export function DayCell({
+  day,
+  label,
+  onPress,
+  today,
+  selected,
+  height = 54,
+  tint = dayTint(day),
+  marked,
+}: Props) {
   const { t, i18n } = useTranslation();
-  const tint = dayTint(day);
   const absence = day.entry && day.entry.minutes === null ? day.entry.kind : undefined;
   const working = day.scheduledMinutes > 0;
 
@@ -54,6 +66,7 @@ export function DayCell({ day, label, onPress, today, selected, height = 54 }: P
       accessibilityLabel={`${formatDate(day.date, i18n.language as Language, 'dayTitle')}, ${value}`}
       style={[styles.cell, { height, backgroundColor: background }, selected && styles.selected]}
     >
+      {marked && <View style={[styles.dot, { backgroundColor: foreground }]} />}
       <Text variant="bodyStrong" color={foreground} style={styles.label}>
         {label}
       </Text>
@@ -73,4 +86,5 @@ const styles = StyleSheet.create({
   selected: { borderWidth: 2, borderColor: colors.ink },
   label: { lineHeight: 18 },
   value: { fontSize: 10, lineHeight: 12 },
+  dot: { position: 'absolute', top: 6, right: 6, width: 5, height: 5, borderRadius: 3 },
 });

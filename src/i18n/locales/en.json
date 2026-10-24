@@ -8,7 +8,8 @@
   },
   "common": {
     "back": "Back",
-    "done": "Done"
+    "done": "Done",
+    "ok": "OK"
   },
   "duration": {
     "hours": "{{h}}h",
@@ -70,7 +71,10 @@
     "monthly": "Monthly",
     "monthHint": "Set the hours for every day of the month. It replaces the weekly schedule for that month only.",
     "perMonth": "This month",
-    "useWeekly": "Use the weekly schedule for this month"
+    "useWeekly": "Use the weekly schedule for this month",
+    "swappedDay": "Swapped day",
+    "plannedMonthsTitle": "Some months keep their monthly plan",
+    "plannedMonthsMessage": "These months have their own monthly plan, so the new weekly schedule doesn’t change them: {{months}}. To use the weekly schedule there, open the month under Monthly and choose “Use the weekly schedule for this month”."
   },
   "settings": {
     "scheduleSummary": "{{total}} / week · since {{date}}",

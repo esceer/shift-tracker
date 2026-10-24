@@ -8,7 +8,8 @@
   },
   "common": {
     "back": "Vissza",
-    "done": "Kész"
+    "done": "Kész",
+    "ok": "OK"
   },
   "duration": {
     "hours": "{{h}} óra",
@@ -70,7 +71,10 @@
     "monthly": "Havi",
     "monthHint": "Állítsd be a hónap minden napját. Csak erre a hónapra írja felül a heti beosztást.",
     "perMonth": "Ebben a hónapban",
-    "useWeekly": "Heti beosztás erre a hónapra"
+    "useWeekly": "Heti beosztás erre a hónapra",
+    "swappedDay": "Áthelyezett nap",
+    "plannedMonthsTitle": "Néhány hónap a havi beosztást tartja",
+    "plannedMonthsMessage": "Ezekre a hónapokra külön havi beosztás van, ezért az új heti beosztás nem változtat rajtuk: {{months}}. Ha ott is a heti beosztást szeretnéd, nyisd meg a hónapot a Havi fülön, és válaszd a „Heti beosztás erre a hónapra” gombot."
   },
   "settings": {
     "scheduleSummary": "{{total}} / hét · {{date}} óta",

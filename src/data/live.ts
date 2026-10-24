@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   DayInfo,
   ISODate,
+  LegalRules,
   Period,
   PeriodReport,
   PlannedDays,
@@ -13,7 +14,13 @@ import type {
 
 import type { Database } from './database';
 import { db } from './db';
-import { readDayForEditing, readDays, readPeriodReport, readUpcoming } from './queries';
+import {
+  readDayForEditing,
+  readDays,
+  readLegalRules,
+  readPeriodReport,
+  readUpcoming,
+} from './queries';
 import { listPlannedDays } from './repositories/plannedDayRepository';
 import { listScheduleVersions } from './repositories/scheduleRepository';
 import { getSettings, type AppSettings } from './repositories/settingsRepository';
@@ -81,6 +88,12 @@ export function useDayForEditing(date: ISODate) {
 export function usePlannedDays(start: ISODate, end: ISODate): PlannedDays {
   const read = useCallback((db: Database) => listPlannedDays(db, { start, end }), [start, end]);
   return useLiveData([plannedDays], read);
+}
+
+/** Munkarend, synced holidays and swapped days in an inclusive range (empty while sync is off). */
+export function useLegalRules(start: ISODate, end: ISODate): LegalRules {
+  const read = useCallback((db: Database) => readLegalRules(db, { start, end }), [start, end]);
+  return useLiveData([publicHolidays, workdaySwaps, settings], read);
 }
 
 export function useScheduleVersions(): ScheduleVersion[] {

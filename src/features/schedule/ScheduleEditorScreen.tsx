@@ -2,12 +2,12 @@ import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
 import { fromISODate, toISODate } from '@/domain/dates';
 import type { Weekday } from '@/domain/types';
 import type { Language } from '@/i18n/language';
-import { formatDate, formatDuration } from '@/lib/format';
+import { capitalize, formatDate, formatDuration } from '@/lib/format';
 import { Button } from '@/ui/components/Button';
 import { IconButton } from '@/ui/components/IconButton';
 import { Screen } from '@/ui/components/Screen';
@@ -92,9 +92,24 @@ function WeeklyScheduleForm({ mode }: Props) {
     });
 
   const save = () => {
-    editor.save();
-    if (onboarding) router.replace('/');
-    else router.back();
+    const plannedMonths = editor.save();
+    if (onboarding) {
+      router.replace('/');
+      return;
+    }
+    if (plannedMonths.length === 0) {
+      router.back();
+      return;
+    }
+    // Monthly plans win over the weekly schedule, so tell which months keep their own plan.
+    const months = plannedMonths.map((month) =>
+      capitalize(formatDate(month, i18n.language as Language, 'monthYear')),
+    );
+    Alert.alert(
+      t('schedule.plannedMonthsTitle'),
+      t('schedule.plannedMonthsMessage', { months: months.join(', ') }),
+      [{ text: t('common.ok'), onPress: () => router.back() }],
+    );
   };
 
   return (

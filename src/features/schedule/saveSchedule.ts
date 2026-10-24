@@ -1,4 +1,5 @@
 import type { Database } from '@/data/database';
+import { listPlannedDays } from '@/data/repositories/plannedDayRepository';
 import {
   deleteScheduleVersion,
   listScheduleVersions,
@@ -25,4 +26,10 @@ export function saveScheduleFrom(
       .forEach((v) => deleteScheduleVersion(tx, v.id));
     saveScheduleVersion(tx, { id: existing?.id ?? newId(), effectiveFrom, minutesByWeekday });
   });
+}
+
+/** First days of the months with a monthly plan on or after `from` (the weekly schedule doesn't apply there). */
+export function plannedMonthsFrom(db: Database, from: ISODate): ISODate[] {
+  const dates = [...listPlannedDays(db, { start: from, end: '9999-12-31' }).keys()];
+  return [...new Set(dates.map((date) => `${date.slice(0, 7)}-01`))];
 }
