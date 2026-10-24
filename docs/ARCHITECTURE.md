@@ -10,7 +10,13 @@ type Weekday = 1 | 2 | 3 | 4 | 5 | 6 | 7; // ISO, Mon = 1
 interface ScheduleVersion {
   id: string;
   effectiveFrom: ISODate; // active until the next version's effectiveFrom
-  minutesByWeekday: Record<Weekday, Minutes>;
+  minutesByWeekday: Record<Weekday, Minutes>; // the usual hours (the plan)
+  dailyMinutes: Minutes; // munkarend: legally required minutes per working day (480 | 360 | 240)
+}
+
+interface WorkdaySwap {
+  date: ISODate; // primary key
+  kind: 'work' | 'rest'; // áthelyezett munkanap (working Saturday) | áthelyezett pihenőnap
 }
 
 type EntryKind = 'adjustment' | 'actual' | 'vacation' | 'sick' | 'holiday';
@@ -34,9 +40,10 @@ type Period =
 
 interface PeriodReport {
   period: Period;
-  scheduledMinutes: Minutes; // sum of schedule over the period
-  workedMinutes: Minutes; // scheduled + deltas (absences credited)
-  balanceMinutes: Minutes; // workedMinutes − scheduledMinutes
+  scheduledMinutes: Minutes; // sum of the plan over the period
+  requiredMinutes: Minutes; // sum of the legally required time
+  workedMinutes: Minutes; // sum of worked(d)
+  balanceMinutes: Minutes; // workedMinutes − requiredMinutes
   absenceDays: Record<'vacation' | 'sick' | 'holiday', number>;
   entries: DayEntry[];
 }
@@ -46,15 +53,18 @@ interface PeriodReport {
 
 For each date `d` in the period:
 
-- `scheduled(d)` = minutes from the schedule version with the greatest `effectiveFrom ≤ d` (0 if there is none)
+- Active version: the schedule version with the greatest `effectiveFrom ≤ d` (none → plan and required are 0)
+- `scheduled(d)` (the plan): the monthly plan's minutes if `d` has one; else on a swapped rest day 0, on a swapped working day the version's `dailyMinutes`; else the version's minutes for that weekday
+- `required(d)` (törvényes munkaidő): swapped rest day → 0; swapped working day → `dailyMinutes`; public holiday → 0; Mon–Fri → `dailyMinutes`; weekend → 0. Holidays and swaps apply only while holiday sync is on.
 - Effective entry for `d`: the user entry if there is one; otherwise, if holiday sync is on and `d` is a public holiday, a virtual `holiday` entry; otherwise none
-- `delta(d)`:
+- `delta(d)` (shown per day; vs the plan):
   - no entry → 0
   - `adjustment` → `minutes`
   - `actual` → `minutes − scheduled(d)`
   - absence → 0
+- `worked(d)`: absence → `required(d)`; otherwise `scheduled(d) + delta(d)`
 - Absence days (`absenceDays`) are counted only on scheduled working days. Synced holidays appear in report entry lists (marked as synced) except when they fall on a day off.
-- A period's balance is the sum of `delta(d)` over its dates. A quarter equals the sum of its three months.
+- A period's balance is `Σ worked(d) − Σ required(d)` over its dates (untouched future days count as planned, so it is a forecast for the period). A quarter equals the sum of its three months.
 
 ## 2. Folder structure
 
@@ -119,20 +129,20 @@ src/
 
 ## 3. Key technical decisions
 
-| Concern         | Choice                                                                              | Why                                                                                                                                                                    |
-| --------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Framework       | Expo (managed) + dev builds                                                         | Easiest Android build path, same codebase for iOS later                                                                                                                |
-| Navigation      | Expo Router (file-based)                                                            | Current standard, typed routes                                                                                                                                         |
-| Persistence     | expo-sqlite + Drizzle ORM 0.45 (sync API)                                           | Relational data, typed queries, generated migrations, `useLiveQuery` for reactive UI                                                                                   |
-| State           | DB is the source of truth; live queries + small hooks                               | No global store needed; settings via a React context                                                                                                                   |
-| Dates           | date-fns (+ `hu` / `enUS` locales)                                                  | Tree-shakeable, string dates without time zone issues                                                                                                                  |
-| i18n            | i18next + react-i18next + expo-localization                                         | De facto standard                                                                                                                                                      |
-| PDF             | expo-print (HTML → PDF) + expo-sharing                                              | No native PDF lib needed                                                                                                                                               |
-| Public holidays | Nager.Date API (free, no key), cached in SQLite                                     | Works offline after one sync. Synced on toggle-on, via "Sync now", and automatically on app start when next year is missing (failures are silent; cached data is kept) |
-| Backup          | JSON via expo-file-system + expo-sharing / expo-document-picker, validated with zod | Safe restore, versioned format                                                                                                                                         |
-| Styling         | Custom design system on StyleSheet + theme tokens; Reanimated for motion            | Full control over the Bento look (§4)                                                                                                                                  |
-| Quality         | TS strict, ESLint (expo config), Prettier, Jest + React Native Testing Library      |                                                                                                                                                                        |
-| Build           | EAS Build → APK (internal) / AAB                                                    |                                                                                                                                                                        |
+| Concern         | Choice                                                                                                                                   | Why                                                                                                                                                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework       | Expo (managed) + dev builds                                                                                                              | Easiest Android build path, same codebase for iOS later                                                                                                                                                                                                          |
+| Navigation      | Expo Router (file-based)                                                                                                                 | Current standard, typed routes                                                                                                                                                                                                                                   |
+| Persistence     | expo-sqlite + Drizzle ORM 0.45 (sync API)                                                                                                | Relational data, typed queries, generated migrations, `useLiveQuery` for reactive UI                                                                                                                                                                             |
+| State           | DB is the source of truth; live queries + small hooks                                                                                    | No global store needed; settings via a React context                                                                                                                                                                                                             |
+| Dates           | date-fns (+ `hu` / `enUS` locales)                                                                                                       | Tree-shakeable, string dates without time zone issues                                                                                                                                                                                                            |
+| i18n            | i18next + react-i18next + expo-localization                                                                                              | De facto standard                                                                                                                                                                                                                                                |
+| PDF             | expo-print (HTML → PDF) + expo-sharing                                                                                                   | No native PDF lib needed                                                                                                                                                                                                                                         |
+| Public holidays | Nager.Date API (free, no key), cached in SQLite; swapped days from `data/hu-workday-swaps.json` in this repo (raw.githubusercontent.com) | Works offline after one sync. Synced on toggle-on, via "Sync now", and automatically on app start when next year is missing or the last sync is over 30 days old (failures are silent; cached data is kept). Update the JSON when the yearly decree is published |
+| Backup          | JSON via expo-file-system + expo-sharing / expo-document-picker, validated with zod                                                      | Safe restore, versioned format                                                                                                                                                                                                                                   |
+| Styling         | Custom design system on StyleSheet + theme tokens; Reanimated for motion                                                                 | Full control over the Bento look (§4)                                                                                                                                                                                                                            |
+| Quality         | TS strict, ESLint (expo config), Prettier, Jest + React Native Testing Library                                                           |                                                                                                                                                                                                                                                                  |
+| Build           | EAS Build → APK (internal) / AAB                                                                                                         |                                                                                                                                                                                                                                                                  |
 
 ## 4. UX outline
 
@@ -165,7 +175,8 @@ Chosen style: **Bento** (see CLAUDE.md for tokens). Mockups: https://claude.ai/a
 
 ## 6. Assumptions (confirm or correct)
 
-- Hungarian public holidays come from the optional sync; holidays for other countries and bridge/swapped working days are out of scope (they can be entered by hand).
+- Hungarian public holidays and swapped days come from the optional sync; holidays for other countries are out of scope (they can be entered by hand).
+- Munkarend is 8h, 6h or 4h on Mon–Fri (general work schedule); data from before the setting counts as 8h.
 - Public holidays are not part of the JSON backup; they are re-synced after a restore.
 - Absences are whole-day only.
 - Before the first schedule version's `effectiveFrom`, the schedule is 0 h/day.

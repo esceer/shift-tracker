@@ -67,4 +67,15 @@ describe('backup compatibility', () => {
     restoreBackup(target, oldBackup);
     expect(listPlannedDays(target).size).toBe(0);
   });
+
+  it('restores backups made before the munkarend setting as 8h', async () => {
+    const target = await createTestDb();
+    const backup = buildBackup(await seededDb(), now);
+    const oldBackup = {
+      ...backup,
+      scheduleVersions: backup.scheduleVersions.map(({ dailyMinutes: _omitted, ...v }) => v),
+    };
+    restoreBackup(target, oldBackup);
+    expect(listScheduleVersions(target)[0]?.dailyMinutes).toBe(480);
+  });
 });

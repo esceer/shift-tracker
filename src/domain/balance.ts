@@ -1,17 +1,18 @@
 import { datesInPeriod } from './dates';
-import { scheduledMinutesOn } from './schedule';
+import { requiredMinutesOn, scheduledMinutesOn } from './schedule';
 import type {
   DayInfo,
   EffectiveEntry,
   ISODate,
   Minutes,
+  NationalCalendar,
   Period,
   PeriodReport,
   PlannedDays,
   ScheduleVersion,
 } from './types';
 
-/** Difference between worked and scheduled time for one day. */
+/** Difference between worked and planned time for one day. */
 export function dayDelta(entry: EffectiveEntry | undefined, scheduled: Minutes): Minutes {
   if (!entry) return 0;
   switch (entry.kind) {
@@ -24,18 +25,35 @@ export function dayDelta(entry: EffectiveEntry | undefined, scheduled: Minutes):
   }
 }
 
-/** Scheduled time, effective entry and delta for each date. `entries` must already be merged. */
+/** Time counted as worked on one day: the plan plus its delta; absences count as the required time. */
+export function dayWorked(
+  entry: EffectiveEntry | undefined,
+  scheduled: Minutes,
+  required: Minutes,
+): Minutes {
+  return entry?.minutes === null ? required : scheduled + dayDelta(entry, scheduled);
+}
+
+/** Planned and required time, effective entry and delta for each date. `entries` must already be merged. */
 export function describeDays(
   dates: readonly ISODate[],
   schedules: readonly ScheduleVersion[],
   entries: readonly EffectiveEntry[],
   plannedDays?: PlannedDays,
+  calendar?: NationalCalendar,
 ): DayInfo[] {
   const entriesByDate = new Map(entries.map((entry) => [entry.date, entry]));
   return dates.map((date) => {
-    const scheduledMinutes = scheduledMinutesOn(schedules, date, plannedDays);
+    const scheduledMinutes = scheduledMinutesOn(schedules, date, plannedDays, calendar);
+    const requiredMinutes = requiredMinutesOn(schedules, date, calendar);
     const entry = entriesByDate.get(date);
-    return { date, scheduledMinutes, entry, deltaMinutes: dayDelta(entry, scheduledMinutes) };
+    return {
+      date,
+      scheduledMinutes,
+      requiredMinutes,
+      entry,
+      deltaMinutes: dayDelta(entry, scheduledMinutes),
+    };
   });
 }
 
@@ -45,11 +63,13 @@ export function buildPeriodReport(
   schedules: readonly ScheduleVersion[],
   entries: readonly EffectiveEntry[],
   plannedDays?: PlannedDays,
+  calendar?: NationalCalendar,
 ): PeriodReport {
   const entriesByDate = new Map(entries.map((entry) => [entry.date, entry]));
   const report: PeriodReport = {
     period,
     scheduledMinutes: 0,
+    requiredMinutes: 0,
     workedMinutes: 0,
     balanceMinutes: 0,
     absenceDays: { vacation: 0, sick: 0, holiday: 0 },
@@ -57,12 +77,13 @@ export function buildPeriodReport(
   };
 
   for (const date of datesInPeriod(period)) {
-    const scheduled = scheduledMinutesOn(schedules, date, plannedDays);
+    const scheduled = scheduledMinutesOn(schedules, date, plannedDays, calendar);
+    const required = requiredMinutesOn(schedules, date, calendar);
     const entry = entriesByDate.get(date);
-    const delta = dayDelta(entry, scheduled);
 
     report.scheduledMinutes += scheduled;
-    report.balanceMinutes += delta;
+    report.requiredMinutes += required;
+    report.workedMinutes += dayWorked(entry, scheduled, required);
 
     if (!entry) continue;
     const isAbsence = entry.minutes === null;
@@ -70,6 +91,6 @@ export function buildPeriodReport(
     if (!(entry.synced && scheduled === 0)) report.entries.push(entry);
   }
 
-  report.workedMinutes = report.scheduledMinutes + report.balanceMinutes;
+  report.balanceMinutes = report.workedMinutes - report.requiredMinutes;
   return report;
 }

@@ -5,7 +5,7 @@ import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/data/db';
-import { useDays, usePlannedDays, useScheduleVersions } from '@/data/live';
+import { useDays, useNationalCalendar, usePlannedDays, useScheduleVersions } from '@/data/live';
 import { deleteMonthPlan, saveMonthPlan } from '@/data/repositories/plannedDayRepository';
 import { periodRange, shiftPeriod, toISODate, toMonthWeeks } from '@/domain/dates';
 import { STEP_MINUTES } from '@/domain/duration';
@@ -71,6 +71,7 @@ function MonthDays({ month }: { month: MonthPeriod }) {
   const days = useDays(start, end);
   const hasPlan = usePlannedDays(start, end).size > 0;
   const versions = useScheduleVersions();
+  const calendar = useNationalCalendar(start, end);
   // Starts from the month's plan, or from the weekly schedule when there is none.
   const [minutes, setMinutes] = useState<Map<ISODate, Minutes>>(
     () => new Map(days.map((day) => [day.date, day.scheduledMinutes])),
@@ -95,7 +96,11 @@ function MonthDays({ month }: { month: MonthPeriod }) {
 
   // Back to the weekly schedule's hours; stored only on save.
   const reset = () =>
-    setMinutes(new Map(days.map((day) => [day.date, scheduledMinutesOn(versions, day.date)])));
+    setMinutes(
+      new Map(
+        days.map((day) => [day.date, scheduledMinutesOn(versions, day.date, undefined, calendar)]),
+      ),
+    );
 
   const save = () => {
     saveMonthPlan(
@@ -131,6 +136,7 @@ function MonthDays({ month }: { month: MonthPeriod }) {
                   day={{
                     date: cell.date,
                     scheduledMinutes: cell.value,
+                    requiredMinutes: 0,
                     entry: undefined,
                     deltaMinutes: 0,
                   }}

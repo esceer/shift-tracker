@@ -1,11 +1,21 @@
-import { activeScheduleOn, scheduledMinutesOn } from './schedule';
+import { activeScheduleOn, requiredMinutesOn, scheduledMinutesOn } from './schedule';
 import { standardSchedule } from './testFixtures';
-import type { ScheduleVersion } from './types';
+import type { NationalCalendar, ScheduleVersion } from './types';
 
 const fromNovember: ScheduleVersion = {
   id: 'v2',
   effectiveFrom: '2026-11-01',
   minutesByWeekday: { 1: 480, 2: 480, 3: 480, 4: 480, 5: 480, 6: 0, 7: 0 },
+  dailyMinutes: 480,
+};
+
+/** 2026: Oct 23 holiday (Fri), Dec 12 working Saturday, Dec 24 rest day (Thu). */
+const calendar: NationalCalendar = {
+  holidays: new Set(['2026-10-23']),
+  swaps: new Map([
+    ['2026-12-12', 'work'],
+    ['2026-12-24', 'rest'],
+  ]),
 };
 
 describe('activeScheduleOn', () => {
@@ -48,5 +58,44 @@ describe('scheduledMinutesOn with a monthly plan', () => {
 
   it('applies even before the first weekly version', () => {
     expect(scheduledMinutesOn([], '2026-10-19', plan)).toBe(300);
+  });
+});
+
+describe('scheduledMinutesOn on swapped days', () => {
+  it('is off on a rest day and the munkarend hours on a working Saturday', () => {
+    expect(scheduledMinutesOn([standardSchedule], '2026-12-24', undefined, calendar)).toBe(0);
+    expect(scheduledMinutesOn([standardSchedule], '2026-12-12', undefined, calendar)).toBe(360);
+  });
+
+  it('lets a monthly plan win', () => {
+    const plan = new Map([['2026-12-12', 120]]);
+    expect(scheduledMinutesOn([standardSchedule], '2026-12-12', plan, calendar)).toBe(120);
+  });
+
+  it('is 0 before the first version', () => {
+    expect(scheduledMinutesOn([], '2026-12-12', undefined, calendar)).toBe(0);
+  });
+});
+
+describe('requiredMinutesOn', () => {
+  it('is the munkarend hours on Mon–Fri, whatever the plan', () => {
+    expect(requiredMinutesOn([standardSchedule], '2026-10-19')).toBe(360); // Mon, planned off
+    expect(requiredMinutesOn([standardSchedule], '2026-10-21')).toBe(360); // Wed, planned 8h
+    expect(requiredMinutesOn([standardSchedule], '2026-10-24')).toBe(0); // Sat
+    expect(requiredMinutesOn([standardSchedule], '2026-10-25')).toBe(0); // Sun
+  });
+
+  it('follows the munkarend of the active version', () => {
+    expect(requiredMinutesOn([standardSchedule, fromNovember], '2026-11-02')).toBe(480);
+  });
+
+  it('is 0 on public holidays and rest days, the munkarend on working Saturdays', () => {
+    expect(requiredMinutesOn([standardSchedule], '2026-10-23', calendar)).toBe(0);
+    expect(requiredMinutesOn([standardSchedule], '2026-12-24', calendar)).toBe(0);
+    expect(requiredMinutesOn([standardSchedule], '2026-12-12', calendar)).toBe(360);
+  });
+
+  it('is 0 without any schedule', () => {
+    expect(requiredMinutesOn([], '2026-10-21')).toBe(0);
   });
 });

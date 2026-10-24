@@ -36,7 +36,12 @@ export function EntryScreen() {
 function EntryEditor({ date }: { date: ISODate }) {
   const { t, i18n } = useTranslation();
   const language = i18n.language as Language;
-  const { scheduledMinutes: scheduled, entry, holidayName } = useDayForEditing(date);
+  const {
+    scheduledMinutes: scheduled,
+    requiredMinutes,
+    entry,
+    holidayName,
+  } = useDayForEditing(date);
   const [form, setForm] = useState(() => initialForm(entry, scheduled));
 
   const toSave = toEntry(form, date, scheduled);
@@ -118,7 +123,7 @@ function EntryEditor({ date }: { date: ISODate }) {
                 scheduled: duration(scheduled),
                 delta: duration(worked - scheduled, true),
               })
-            : t('entry.previewAbsence', { scheduled: duration(scheduled) })}
+            : t('entry.previewAbsence', { required: duration(requiredMinutes) })}
         </Text>
       </Tile>
 

@@ -34,6 +34,8 @@ const backupSchema = z.object({
         6: dayMinutes,
         7: dayMinutes,
       }),
+      // Added later; older backups were made before the munkarend setting (8h).
+      dailyMinutes: dayMinutes.default(480),
     }),
   ),
   dayEntries: z.array(

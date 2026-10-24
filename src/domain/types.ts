@@ -16,7 +16,24 @@ export interface ScheduleVersion {
   id: string;
   /** Active from this date until the next version's `effectiveFrom`. */
   effectiveFrom: ISODate;
+  /** The usual hours per weekday (the plan). */
   minutesByWeekday: WeeklyMinutes;
+  /** Munkarend: legally required minutes per working day (480, 360 or 240). */
+  dailyMinutes: Minutes;
+}
+
+/** Áthelyezett munkanap: a Saturday that is a working day (`work`) or a weekday off (`rest`). */
+export type SwapKind = 'work' | 'rest';
+
+export interface WorkdaySwap {
+  date: ISODate;
+  kind: SwapKind;
+}
+
+/** Synced public holidays and swapped days that change the legal working days (empty when sync is off). */
+export interface NationalCalendar {
+  holidays: ReadonlySet<ISODate>;
+  swaps: ReadonlyMap<ISODate, SwapKind>;
 }
 
 export type AbsenceKind = 'vacation' | 'sick' | 'holiday';
@@ -48,6 +65,8 @@ export type EffectiveEntry = DayEntry & { synced: boolean };
 export interface DayInfo {
   date: ISODate;
   scheduledMinutes: Minutes;
+  /** Legally required minutes (munkarend on working days). */
+  requiredMinutes: Minutes;
   entry: EffectiveEntry | undefined;
   deltaMinutes: Minutes;
 }
@@ -59,9 +78,10 @@ export type Period =
 export interface PeriodReport {
   period: Period;
   scheduledMinutes: Minutes;
-  /** Scheduled time plus all deltas (absences count as fulfilled). */
+  requiredMinutes: Minutes;
+  /** Planned time plus all deltas; absences count as the required time. */
   workedMinutes: Minutes;
-  /** `workedMinutes − scheduledMinutes`. */
+  /** `workedMinutes − requiredMinutes`. */
   balanceMinutes: Minutes;
   /** Absence days that fell on scheduled working days. */
   absenceDays: Record<AbsenceKind, number>;

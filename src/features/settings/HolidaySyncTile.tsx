@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Switch, View } from 'react-native';
 
 import { db } from '@/data/db';
 import { fetchHungarianHolidays } from '@/data/holidays/nagerClient';
+import { fetchHungarianWorkdaySwaps } from '@/data/holidays/swapClient';
 import { syncHolidays } from '@/data/holidays/syncHolidays';
 import { useSettings } from '@/data/live';
 import { setSetting } from '@/data/repositories/settingsRepository';
@@ -24,7 +25,7 @@ export function HolidaySyncTile() {
   const sync = async () => {
     setStatus('syncing');
     try {
-      await syncHolidays(db, fetchHungarianHolidays, new Date());
+      await syncHolidays(db, fetchHungarianHolidays, fetchHungarianWorkdaySwaps, new Date());
       setStatus('idle');
     } catch {
       setStatus('failed');

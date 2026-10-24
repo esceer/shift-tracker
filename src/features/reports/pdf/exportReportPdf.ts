@@ -47,7 +47,7 @@ function buildDocument(period: Period, t: TFunction, language: Language): Report
     title: `${t('export.reportTitle')} · ${formatPeriod(period, t, language)}`,
     generatedOn: t('export.generated', { date: formatDate(toISODate(new Date()), language) }),
     summary: [
-      { label: t('export.scheduled'), value: duration(report.scheduledMinutes) },
+      { label: t('export.required'), value: duration(report.requiredMinutes) },
       { label: t('export.worked'), value: duration(report.workedMinutes) },
       { label: t('export.balance'), value: duration(report.balanceMinutes, true) },
     ],

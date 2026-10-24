@@ -15,6 +15,13 @@
       "when": 1792737536369,
       "tag": "0001_planned_days",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1792863660554,
+      "tag": "0002_munkarend",
+      "breakpoints": true
     }
   ]
 }

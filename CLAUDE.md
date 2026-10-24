@@ -5,16 +5,18 @@ Primary user: non-technical, Samsung flagship phone → clean, modern, friendly 
 
 ## Product rules
 
-- **Schedule**: weekly pattern (minutes per weekday), versioned by `effectiveFrom` date. Editing never rewrites past periods.
+- **Schedule** ("Beosztás"): the usual weekly hours (minutes per weekday) plus the **munkarend** (legal daily hours: 8h / 6h / 4h), versioned together by `effectiveFrom` date. Editing never rewrites past periods.
+- **Required time** (törvényileg előírt): munkarend hours on Mon–Fri and on swapped working Saturdays; 0 on weekends, public holidays and swapped rest days.
 - **Monthly plan** (optional, per month): planned minutes for every day of that month (`planned_days`); replaces the weekly schedule for that month only. Starts from the weekly values; can be removed.
 - **Day entry** (max one per date), entered as either:
   - `actual` (UI: "Módosítás"/"Adjust"): hours actually worked, editor starts at the planned hours (0–24h) → delta = actual − scheduled
   - `adjustment`: ± delta vs schedule. Legacy: still read (and in backups), never created; the editor converts it to `actual` on save
-  - `vacation` | `sick` | `holiday`: whole-day absence, scheduled hours counted as fulfilled (delta 0)
+  - `vacation` | `sick` | `holiday`: whole-day absence, counts as the required hours
 - Optional note per entry. Time in 15-min steps, stored as integer **minutes**.
-- **Balance is per period only** (month, quarter Q1–Q4); no carry-over. Period balance = sum of deltas for all dates in the period, future-dated entries included.
-- **Public holidays (HU)**: optional (Settings toggle). Fetched from the Nager.Date API (current + next year) and cached in the DB, so they work offline. On a date with no user entry, a holiday counts as a `holiday` absence; a user entry always overrides it. No bridge/swapped working days.
-- Data is local-only (the holiday sync is the only network call). Export: PDF report per month or quarter; full JSON backup/restore.
+- **Balance is per period only** (month, quarter Q1–Q4); no carry-over. Period balance = worked − required over all dates in the period; untouched days (future ones too) count as planned. Per-day deltas shown in the UI are vs the plan.
+- **Public holidays (HU)**: optional (Settings toggle). Fetched from the Nager.Date API (current + next year) and cached in the DB, so they work offline. On a date with no user entry, a holiday counts as a `holiday` absence; a user entry always overrides it.
+- **Swapped days** (áthelyezett munkanapok): synced with the holidays from `data/hu-workday-swaps.json` in this repo (`{ "YYYY-MM-DD": "work" | "rest" }`). Add the new year's dates when the decree is published; a test checks the file parses.
+- Data is local-only (the holiday sync is the only network access). Export: PDF report per month or quarter; full JSON backup/restore.
 - UI languages: English + Hungarian (follows device, can be overridden in settings).
 
 ## UI style: "Bento" (chosen)

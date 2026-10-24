@@ -11,6 +11,8 @@ export const scheduleVersions = sqliteTable('schedule_versions', {
   friMinutes: integer('fri_minutes').notNull(),
   satMinutes: integer('sat_minutes').notNull(),
   sunMinutes: integer('sun_minutes').notNull(),
+  /** Munkarend: legally required minutes per working day. */
+  dailyMinutes: integer('daily_minutes').notNull().default(480),
 });
 
 export const dayEntries = sqliteTable(
@@ -35,6 +37,12 @@ export const dayEntries = sqliteTable(
 export const publicHolidays = sqliteTable('public_holidays', {
   date: text('date').primaryKey(),
   name: text('name').notNull(),
+});
+
+/** Swapped days (áthelyezett munkanapok), synced together with the public holidays. */
+export const workdaySwaps = sqliteTable('workday_swaps', {
+  date: text('date').primaryKey(),
+  kind: text('kind', { enum: ['work', 'rest'] }).notNull(),
 });
 
 /** Key/value app settings; values are JSON-encoded. */

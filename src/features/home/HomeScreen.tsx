@@ -18,11 +18,11 @@ import { Tile } from '@/ui/components/Tile';
 import { colors, spacing } from '@/ui/theme/tokens';
 
 /** "of the planned 136h" / "az előírt 136 órához képest" (the Hungarian suffix depends on the unit). */
-function ofPlanned(minutes: number, t: TFunction): string {
+function ofRequired(minutes: number, t: TFunction): string {
   const { hours: h, minutes: m } = splitDuration(minutes);
-  if (h && m) return t('home.ofPlannedHoursMinutes', { h, m });
-  if (m) return t('home.ofPlannedMinutes', { m });
-  return t('home.ofPlannedHours', { h });
+  if (h && m) return t('home.ofRequiredHoursMinutes', { h, m });
+  if (m) return t('home.ofRequiredMinutes', { m });
+  return t('home.ofRequiredHours', { h });
 }
 
 const openEntry = (date: ISODate) => router.push({ pathname: '/entry/[date]', params: { date } });
@@ -62,7 +62,7 @@ export function HomeScreen() {
           {formatBalance(balance, t)}
         </Text>
         <Text color={colors.inkMuted} style={styles.alignEnd}>
-          {ofPlanned(report.scheduledMinutes, t)}
+          {ofRequired(report.requiredMinutes, t)}
         </Text>
       </Tile>
 

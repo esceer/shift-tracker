@@ -103,7 +103,7 @@ export function ReportsScreen() {
         <Text color={colors.inkMuted} style={styles.center}>
           {t('home.workedOf', {
             worked: duration(report.workedMinutes),
-            scheduled: duration(report.scheduledMinutes),
+            required: duration(report.requiredMinutes),
           })}
         </Text>
       </Tile>

@@ -2,14 +2,15 @@ import type { DayEntry, ScheduleVersion } from './types';
 
 const h = (hours: number) => hours * 60;
 
-/** Mon off, Tue 6h, Wed 8h, Thu 8h, Fri 6h, weekend off (28h/week). */
+/** Mon off, Tue 6h, Wed 8h, Thu 8h, Fri 6h, weekend off (28h/week); 6h munkarend (30h/week). */
 export const standardSchedule: ScheduleVersion = {
   id: 'v1',
   effectiveFrom: '2026-01-01',
   minutesByWeekday: { 1: 0, 2: h(6), 3: h(8), 4: h(8), 5: h(6), 6: 0, 7: 0 },
+  dailyMinutes: h(6),
 };
 
-/** October 2026 entries used in the design mockups; balance +2h 45m. */
+/** October 2026 entries used in the design mockups; +2h 45m vs the plan. */
 export const octoberEntries: DayEntry[] = [
   { date: '2026-10-05', kind: 'adjustment', minutes: h(4), note: 'Inventory count' },
   { date: '2026-10-14', kind: 'adjustment', minutes: -h(2), note: 'Left early' },

@@ -20,6 +20,7 @@ function toDomain(row: Row): ScheduleVersion {
       6: row.satMinutes,
       7: row.sunMinutes,
     },
+    dailyMinutes: row.dailyMinutes,
   };
 }
 
@@ -35,6 +36,7 @@ export function toScheduleRow(version: ScheduleVersion): Row {
     friMinutes: m[5],
     satMinutes: m[6],
     sunMinutes: m[7],
+    dailyMinutes: version.dailyMinutes,
   };
 }
 

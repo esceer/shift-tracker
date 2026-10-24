@@ -53,6 +53,8 @@
     "title": "Your usual week",
     "editTitle": "Work schedule",
     "subtitle": "How many hours do you normally work each day?",
+    "dailyHours": "Legal daily hours",
+    "requiredPerWeek": "{{total}} required by law per week",
     "editHint": "Changes count from the chosen date. Earlier days keep the old schedule.",
     "off": "Off",
     "less": "{{day}}: 15 minutes less",
@@ -93,7 +95,7 @@
     "typeHours": "Type the hours",
     "increase": "15 minutes more",
     "previewActual": "Planned {{scheduled}} · difference {{delta}}",
-    "previewAbsence": "Scheduled {{scheduled}} counts as worked",
+    "previewAbsence": "Counts as the required {{required}}",
     "holidayHint": "Public holiday: {{name}}",
     "note": "Note",
     "notePlaceholder": "Examination ran late",
@@ -102,7 +104,7 @@
   },
   "home": {
     "thisMonth": "This month",
-    "workedOf": "{{worked}} / {{scheduled}} planned",
+    "workedOf": "{{worked}} / {{required}} required",
     "ahead": "Ahead",
     "behind": "Behind",
     "onTrack": "On track",
@@ -111,9 +113,9 @@
     "nextHoliday": "Holiday · {{day}}",
     "noHoliday": "No upcoming holidays",
     "thisWeek": "This week",
-    "ofPlannedHours": "of the planned {{h}}h",
-    "ofPlannedHoursMinutes": "of the planned {{h}}h {{m}}m",
-    "ofPlannedMinutes": "of the planned {{m}}m"
+    "ofRequiredHours": "of the required {{h}}h",
+    "ofRequiredHoursMinutes": "of the required {{h}}h {{m}}m",
+    "ofRequiredMinutes": "of the required {{m}}m"
   },
   "calendar": {
     "previousMonth": "Previous month",
@@ -152,7 +154,7 @@
     "failed": "Couldn't create the PDF.",
     "reportTitle": "Work time report",
     "generated": "Generated on {{date}}",
-    "scheduled": "Scheduled",
+    "required": "Required",
     "worked": "Worked",
     "balance": "Balance",
     "date": "Date",
