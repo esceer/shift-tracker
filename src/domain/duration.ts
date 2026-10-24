@@ -38,3 +38,14 @@ export function parseDuration(text: string): Minutes | null {
 export function toClock(minutes: Minutes): string {
   return `${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, '0')}`;
 }
+
+/** Rounds to the nearest whole hour. */
+export function roundToHour(minutes: Minutes): Minutes {
+  return Math.round(minutes / 60) * 60;
+}
+
+/** Steps by whole hours, landing on a whole hour (5:30 + 1 → 6:00, 5:30 − 1 → 5:00). */
+export function stepWholeHours(minutes: Minutes, steps: number): Minutes {
+  const hours = minutes / 60 + steps;
+  return (steps > 0 ? Math.floor(hours) : Math.ceil(hours)) * 60;
+}

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { db } from '@/data/db';
 import { useScheduleVersions } from '@/data/live';
 import { toISODate } from '@/domain/dates';
-import { STEP_MINUTES } from '@/domain/duration';
+import { roundToHour, stepWholeHours } from '@/domain/duration';
 import { activeScheduleOn } from '@/domain/schedule';
 import type { ISODate, Minutes, Weekday, WeeklyMinutes } from '@/domain/types';
 
@@ -35,17 +35,15 @@ export function useScheduleEditor(mode: 'onboarding' | 'edit') {
     mode === 'onboarding' ? toISODate(startOfMonth(new Date())) : today,
   );
 
-  const changeDay = (weekday: Weekday, steps: number) =>
-    setMinutes((current) => ({
-      ...current,
-      [weekday]: Math.min(MAX_DAY_MINUTES, Math.max(0, current[weekday] + steps * STEP_MINUTES)),
-    }));
-
+  // The usual week is set in whole hours.
   const setDay = (weekday: Weekday, value: number) =>
     setMinutes((current) => ({
       ...current,
-      [weekday]: Math.min(MAX_DAY_MINUTES, Math.max(0, value)),
+      [weekday]: Math.min(MAX_DAY_MINUTES, Math.max(0, roundToHour(value))),
     }));
+
+  const changeDay = (weekday: Weekday, steps: number) =>
+    setDay(weekday, stepWholeHours(minutes[weekday], steps));
 
   const weeklyTotal = Object.values(minutes).reduce((sum, m) => sum + m, 0);
 

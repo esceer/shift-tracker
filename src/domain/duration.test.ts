@@ -1,4 +1,11 @@
-import { parseDuration, snapToStep, splitDuration, toClock } from './duration';
+import {
+  parseDuration,
+  roundToHour,
+  snapToStep,
+  splitDuration,
+  stepWholeHours,
+  toClock,
+} from './duration';
 
 describe('snapToStep', () => {
   it.each([
@@ -48,5 +55,29 @@ describe('toClock', () => {
     expect(toClock(450)).toBe('7:30');
     expect(toClock(0)).toBe('0:00');
     expect(toClock(1440)).toBe('24:00');
+  });
+});
+
+describe('roundToHour', () => {
+  it.each([
+    [0, 0],
+    [29, 0],
+    [30, 60],
+    [450, 480],
+    [435, 420],
+  ])('%i → %i', (input, expected) => {
+    expect(roundToHour(input)).toBe(expected);
+  });
+});
+
+describe('stepWholeHours', () => {
+  it.each([
+    [480, 1, 540],
+    [480, -1, 420],
+    [330, 1, 360],
+    [330, -1, 300],
+    [0, -1, -60],
+  ])('%i %+i → %i', (minutes, steps, expected) => {
+    expect(stepWholeHours(minutes, steps)).toBe(expected);
   });
 });

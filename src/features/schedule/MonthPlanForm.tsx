@@ -8,7 +8,7 @@ import { db } from '@/data/db';
 import { useDays, useNationalCalendar, usePlannedDays, useScheduleVersions } from '@/data/live';
 import { deleteMonthPlan, saveMonthPlan } from '@/data/repositories/plannedDayRepository';
 import { periodRange, shiftPeriod, toISODate, toMonthWeeks } from '@/domain/dates';
-import { STEP_MINUTES } from '@/domain/duration';
+import { roundToHour, stepWholeHours } from '@/domain/duration';
 import { scheduledMinutesOn } from '@/domain/schedule';
 import type { ISODate, Minutes, Period } from '@/domain/types';
 import type { Language } from '@/i18n/language';
@@ -79,18 +79,14 @@ function MonthDays({ month }: { month: MonthPeriod }) {
   const [editing, setEditing] = useState<ISODate>();
   const insets = useSafeAreaInsets();
 
-  const change = (date: ISODate, steps: number) =>
-    setMinutes((current) => {
-      const next = new Map(current);
-      const value = (current.get(date) ?? 0) + steps * STEP_MINUTES;
-      next.set(date, Math.min(MAX_DAY_MINUTES, Math.max(0, value)));
-      return next;
-    });
-
+  // The plan is set in whole hours.
   const set = (date: ISODate, value: Minutes) =>
     setMinutes((current) =>
-      new Map(current).set(date, Math.min(MAX_DAY_MINUTES, Math.max(0, value))),
+      new Map(current).set(date, Math.min(MAX_DAY_MINUTES, Math.max(0, roundToHour(value)))),
     );
+
+  const change = (date: ISODate, steps: number) =>
+    set(date, stepWholeHours(minutes.get(date) ?? 0, steps));
 
   const total = [...minutes.values()].reduce((sum, m) => sum + m, 0);
 
@@ -203,8 +199,8 @@ function MonthDays({ month }: { month: MonthPeriod }) {
               minutes={minutes.get(editing) ?? 0}
               onChangeMinutes={(value) => set(editing, value)}
               editLabel={t('entry.typeHours')}
-              decrementLabel={t('entry.decrease')}
-              incrementLabel={t('entry.increase')}
+              decrementLabel={t('schedule.hourLess')}
+              incrementLabel={t('schedule.hourMore')}
               variant="title"
               buttonSize={56}
             />
