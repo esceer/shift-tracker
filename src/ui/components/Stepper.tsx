@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { parseDuration, toClock } from '@/domain/duration';
 import type { Minutes } from '@/domain/types';
@@ -49,6 +49,12 @@ export function Stepper({
     setDraft(undefined);
   };
 
+  // −/+ closes the text field, so the stepped value is visible.
+  const step = (handler: () => void) => {
+    setDraft(undefined);
+    handler();
+  };
+
   const label = (
     <Text
       variant={variant}
@@ -67,7 +73,7 @@ export function Stepper({
       <IconButton
         icon="minus"
         accessibilityLabel={decrementLabel}
-        onPress={onDecrement}
+        onPress={() => step(onDecrement)}
         background={buttonBackground}
         size={buttonSize}
       />
@@ -78,8 +84,11 @@ export function Stepper({
           onBlur={commit}
           onSubmitEditing={commit}
           autoFocus
-          selectTextOnFocus
-          keyboardType="numbers-and-punctuation"
+          // Starts empty so typing replaces the value; leaving it empty keeps it.
+          placeholder={toClock(minutes ?? 0)}
+          placeholderTextColor={colors.inkSubtle}
+          // Android's number pad has no ':' but takes "7,5"; iOS's keypad has both.
+          keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'decimal-pad'}
           returnKeyType="done"
           accessibilityLabel={editLabel}
           style={[
@@ -91,7 +100,7 @@ export function Stepper({
         />
       ) : editable ? (
         <Pressable
-          onPress={() => setDraft(toClock(minutes))}
+          onPress={() => setDraft('')}
           accessibilityRole="button"
           accessibilityLabel={editLabel ? `${editLabel}: ${valueLabel}` : valueLabel}
           style={styles.value}
@@ -104,7 +113,7 @@ export function Stepper({
       <IconButton
         icon="plus"
         accessibilityLabel={incrementLabel}
-        onPress={onIncrement}
+        onPress={() => step(onIncrement)}
         background={buttonBackground}
         size={buttonSize}
       />

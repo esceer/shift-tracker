@@ -40,7 +40,7 @@ describe('Stepper', () => {
 
     await fireEvent.press(screen.getByRole('button', { name: 'Hours: 6h' }));
     const input = screen.getByLabelText('Hours');
-    expect(input).toHaveDisplayValue('6:00');
+    expect(input).toHaveProp('placeholder', '6:00');
     await fireEvent.changeText(input, '7,5');
     await fireEvent(input, 'submitEditing');
     expect(onChangeMinutes).toHaveBeenCalledWith(450);
