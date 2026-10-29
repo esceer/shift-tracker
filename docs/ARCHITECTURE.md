@@ -62,7 +62,7 @@ For each date `d` in the period:
 - `scheduled(d)` (the plan): the monthly plan's minutes if `d` has one; else on a swapped rest day 0, on a swapped working day `dailyMinutes`; else the version's minutes for that weekday
 - `required(d)` (törvényes munkaidő): before the first schedule version → 0; swapped rest day → 0; swapped working day → `dailyMinutes`; public holiday → 0; Mon–Fri → `dailyMinutes`; weekend → 0. Holidays and swaps apply only while holiday sync is on.
 - Effective entry for `d`: the user entry if there is one; otherwise, if holiday sync is on and `d` is a public holiday, a virtual `holiday` entry; otherwise none
-- `delta(d)` (shown per day; vs the plan):
+- `delta(d)` (vs the plan; shown in change lists and the entry editor):
   - no entry → 0
   - `adjustment` → `minutes`
   - `actual` → `minutes − scheduled(d)`
@@ -158,7 +158,7 @@ Chosen style: **Bento** (see CLAUDE.md for tokens). Mockups: https://claude.ai/a
 - Navigation: floating bottom bar (Home, Calendar, central "+" Add change, Reports, Settings).
 - **Home**: balance tile for the current month, "next change" and "next holiday" tiles, this-week strip.
 - **Add change**: day picker, kind tiles (Adjust / Actual / Vacation / Sick / Holiday), Less/More toggle, ± stepper in 15-min steps, "scheduled → you'll work" preview, note.
-- **Calendar**: month grid coloured by kind, legend, selected-day tile with Edit.
+- **Calendar**: month grid coloured by kind (a cell shows the hours worked, or the planned hours if unchanged), legend, selected-day tile with Edit.
 - **Reports**: Month/Quarter toggle, period navigation, balance tile, per-month tiles, days-off tiles, "Export PDF".
 - **Settings**: work schedule tile (opens editor), Hungarian holidays toggle + "Sync now", language, export/restore backup.
 - **Onboarding**: Welcome (language) → Usual week (also used as the schedule editor).

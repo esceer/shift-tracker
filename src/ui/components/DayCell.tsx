@@ -24,7 +24,7 @@ type Props = {
 };
 
 /**
- * One day in the week strip or month grid: scheduled hours, the change (+1:30 / −2h)
+ * One day in the week strip or month grid: scheduled hours, the hours worked (when changed)
  * or an absence icon, coloured by kind.
  */
 export function DayCell({
@@ -53,7 +53,7 @@ export function DayCell({
   const value = day.entry
     ? absence
       ? t(`entryKind.${absence}`)
-      : formatDurationCompact(day.deltaMinutes, t, { signed: true })
+      : formatDurationCompact(day.scheduledMinutes + day.deltaMinutes, t)
     : working
       ? formatDurationCompact(day.scheduledMinutes, t)
       : t('day.off');

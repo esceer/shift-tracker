@@ -14,7 +14,7 @@ Primary user: non-technical, Samsung flagship phone → clean, modern, friendly 
   - `adjustment`: ± delta vs schedule. Legacy: still read (and in backups), never created; the editor converts it to `actual` on save
   - `vacation` | `sick` | `holiday`: whole-day absence, counts as the required hours
 - Optional note per entry. Time in 15-min steps, stored as integer **minutes**.
-- **Balance is per period only** (month, quarter Q1–Q4); no carry-over. Period balance = worked − required over all dates in the period; untouched days (future ones too) count as planned. Per-day deltas shown in the UI are vs the plan.
+- **Balance is per period only** (month, quarter Q1–Q4); no carry-over. Period balance = worked − required over all dates in the period; untouched days (future ones too) count as planned. Calendar cells (month grid, Home week strip) show the hours worked; per-day deltas elsewhere (next change, change lists, PDF, entry editor) are vs the plan.
 - **Public holidays (HU)**: optional (Settings toggle). Fetched from the Nager.Date API (current + next year) and cached in the DB, so they work offline. On a date with no user entry, a holiday counts as a `holiday` absence; a user entry always overrides it.
 - **Swapped days** (áthelyezett munkanapok): synced with the holidays from `data/hu-workday-swaps.json` in this repo (`{ "YYYY-MM-DD": "work" | "rest" }`). Add the new year's dates when the decree is published; a test checks the file parses.
 - Data is local-only (the holiday sync is the only network access). Export: PDF report per month or quarter; full JSON backup/restore.
